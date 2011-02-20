@@ -1,0 +1,41 @@
+Deterministic
+Do
+	Check each pixel
+		If pixel is white
+			Apply all transformations
+	Redraw screen
+When click happens
+
+Chaos
+Pick random pixel
+Do
+	Apply a random transformation
+n times
+Do
+	Apply a random transformation
+	Draw pixel onto screen
+n times
+
+Transformation Input
+Do
+	Click -> p1
+	Draw line to mouse
+	Click -> p2
+	Draw parallelogram [(p1),(p2),(mouse),(mousex-p2x,mousey-p1y)]
+	Limit third click to parallelogram area less than n=1 transformation
+		Click -> p3
+		Store p1,p2,p3 as nth space
+		Draw parallelogram p1,p2,p3
+		Label vertices p1,p2,p3
+n times
+Take n=1 as original space
+Solve a*x + b*y + e = x' and c*x + d*y + f = y' for a,b,c,d,e,f given n=1 points and n=k>1 points:
+(x1 | y1 | 1 | p1
+ x2 | y2 | 1 | q2
+ x3 | y3 | 1 | r3)
+	becomes
+(1 | 0 | 0 | (-q2 y1+r3 y1+p1 y2-r3 y2-p1 y3+q2 y3)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3)
+ 0 | 1 | 0 | (q2 x1-r3 x1-p1 x2+r3 x2+p1 x3-q2 x3)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3)
+ 0 | 0 | 1 | (-r3 x2 y1+q2 x3 y1+r3 x1 y2-p1 x3 y2-q2 x1 y3+p1 x2 y3)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3))
+ and the same with xpi replaced by ypi
+http://www.wolframalpha.com/input/?i=row+reduce+{{x1%2Cy1%2C1%2Cp1}%2C{x2%2Cy2%2C1%2Cq2}%2C{x3%2Cy3%2C1%2Cr3}}
