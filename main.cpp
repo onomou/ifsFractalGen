@@ -23,7 +23,7 @@ struct pts
 };
 vector<pts*> boxes;
 SDL_Surface *screen, *controls, *fractal;
-bool pointActive, regionActive,redrawFractal;
+bool pointActive, regionActive,redrawFractal, newActive;
 int whichPoint[2],whichRegion;	// TODO: merge these two - no need to be redundant
 
 Uint32 getpix( SDL_Surface *surface, int x, int y );
@@ -35,12 +35,13 @@ void chaos( bool quick = false );
 double dist2( double x, double y, double x0, double y0 );
 void makeTransforms( void );
 
-void render( void );
+void render( bool flip = true );
 void drawRects( void );
 void drawFractal( void );
 
 bool activate( Sint16 x, Sint16 y );
-T* crunch( pts *q );
+T* crunch( pts *p );
+T* crunch2( pts *p, pts *q );
 void swap( Sint16 *x, Sint16 *y )
 {
 	Sint16 t = *x;
@@ -75,13 +76,17 @@ int main( int argc, char* argv[] )
 	fractal  = SDL_ConvertSurface( screen, screen->format, screen->flags|SDL_SRCALPHA );
 	SDL_SetColorKey( fractal, SDL_SRCCOLORKEY, 0 );
 	// SDL_SetAlpha( fractal, 0, 255 );
-	redrawFractal = false;
+	redrawFractal = newActive = false;
+	whichRegion = whichPoint[0] = whichPoint[1] = 0;
 	
 	/* End SDL initialization */
 
 	makeTransforms();
 	// deterministic();
-	// chaos();
+	SDL_FillRect( screen, NULL, 0 );
+	drawFractal();
+	SDL_Flip( screen );
+	
 	Sint16 x,y;
 	getclick(x,y);
 	return 0;
@@ -121,7 +126,6 @@ int getred( SDL_Surface *surface, int x, int y )
 bool getclick( Sint16 &x, Sint16 &y )
 {
 	SDL_Event event;
-	bool highlighted = false;	// indicates whether a point is currently highlighted
 	while( true )
 	{
 		while( SDL_PollEvent( &event ) )
@@ -131,8 +135,6 @@ bool getclick( Sint16 &x, Sint16 &y )
 				case SDL_QUIT:
 					x = y = -1;
 					return false;
-
-
 				case SDL_ACTIVEEVENT:
 					break;
 				case SDL_KEYDOWN:
@@ -144,7 +146,6 @@ bool getclick( Sint16 &x, Sint16 &y )
 						return false;
 					}
 					break;
-
 				case SDL_MOUSEBUTTONDOWN:
 					break;
 				case SDL_MOUSEBUTTONUP:
@@ -153,20 +154,6 @@ bool getclick( Sint16 &x, Sint16 &y )
 					return true;
 					break;
 				case SDL_MOUSEMOTION:
-					// if( !highlighted )
-					// {
-						// if( highlight( event.button.x, event.button.y ) )
-							// highlighted = true;
-					// }
-					// else
-					// {
-						// if( !highlight( event.button.x, event.button.y ) )
-						// {
-							// highlighted = false;
-							// refresh( false );
-							// SDL_Flip( screen );
-						// }
-					// }
 					break;
 				default:
 					break;
@@ -177,26 +164,17 @@ bool getclick( Sint16 &x, Sint16 &y )
 void makeTransforms( void )
 {
 	SDL_Event event;
-	bool done = false, dragging = false;
-	// values *tr;
+	bool done = false, dragging = false, down = false, activated = false;
 	T *temp;
-	// Sint16 xp[4], yp[4];
-	pts *q;//, obox;
-	// unsigned short int o = 0;
-	// vector<T*> tfs2;
-	// vector<pts> boxes;
-	// obox.x[0]=obox.x[1]=obox.x[2]=obox.y[0]=obox.y[1]=obox.y[2]=0;
-	// while( !getclick( obox.x[0],obox.y[0] ) );	// get first point
-	// q->x[0] = int(q->x[0] / 10) * 10;	// round click to nearest 10 pixels
-	// q->y[0] = int(q->y[0] / 10) * 10;	//
-
+	pts *q;
+	
 	/* Get rectangles */
 	for( int o = 0; !done; o++ )	// loop until done is set true, increment o each iteration
 	{
 		// cout << "makeTransforms in while !done loop\n";
 		q = new pts;
-		while( !getclick( q->x[0],q->y[0] ) );	// get first point
-		for( int i = 1; i < 3; )
+		// while( !getclick( q->x[0],q->y[0] ) );	// get first point
+		for( int i = 0; i < 3; )
 		{
 			while( SDL_PollEvent( &event ) )
 			{
@@ -207,30 +185,44 @@ void makeTransforms( void )
 						i = 3;
 						break;
 					case SDL_MOUSEBUTTONDOWN:	// clicked new vertex
-						getclick( q->x[i], q->y[i] );
+						// getclick( q->x[i], q->y[i] );
+						q->x[i] = event.button.x;
+						q->y[i] = event.button.y;
+						down = true;
 						if( i == 2 )	// third vertex
 						{
 							q->x[3] = q->x[1] + q->x[2] - q->x[0];	// calculate fourth vertex
 							q->y[3] = q->y[1] + q->y[2] - q->y[0];
-							swap( &q->x[2], &q->x[3] );	// fix vertex order to be side-pairwise linear
+							swap( &q->x[2], &q->x[3] );	// fix vertex order to be in order of occurence
 							swap( &q->y[2], &q->y[3] );	//
 						}
 						i++;
 						break;
+					case SDL_MOUSEBUTTONUP:
+						if( down )
+						{
+							if( dist2( event.button.x, event.button.y, q->x[i-1], q->y[i-1] ) > 80 )	// moved mouse at least 9 pixels dragging
+							{
+								q->x[i] = event.button.x;	// put vertex at mouse release position
+								q->y[i] = event.button.y;	//
+								if( i == 2 )	// third vertex
+								{
+									q->x[3] = q->x[1] + q->x[2] - q->x[0];	// calculate fourth vertex
+									q->y[3] = q->y[1] + q->y[2] - q->y[0];
+									swap( &q->x[2], &q->x[3] );	// fix vertex order to be in order of occurence
+									swap( &q->y[2], &q->y[3] );	//
+								}
+								i++;
+							}
+							down = false;
+						}
+						break;
 					case SDL_MOUSEMOTION:
-						render();	// draw other rectangles
+						render(false);	// draw other rectangles
 						if( i == 1 )	// first point laid down
 							lineColor( screen, q->x[0], q->y[0], event.button.x, event.button.y, 0xFFFFFFFF );
-						else	// two points laid down
+						else if( i == 2 )	// two points laid down
 						{
-							// q->x[3] = q->x[1] + event.button.x - q->x[0];
-							// q->y[3] = q->y[1] + event.button.y - q->y[0];
-							// for( int v = 0; v < 4; v++ )
-							// {
-								// xp[v] = q->x[v];
-								// yp[v] = q->y[v];
-							// }
-							// polygonColor( screen, xp, yp, 4, 0xFFFFFFFF );
 							lineColor( screen, q->x[0], q->y[0], q->x[1], q->y[1], 0xFFFFFFFF );	// 0-1
 							lineColor( screen, q->x[0], q->y[0], event.button.x, event.button.y, 0xFFFFFFFF );	// 0-2
 							lineColor( screen, q->x[1], q->y[1], q->x[1] + event.button.x - q->x[0], q->y[1] + event.button.y - q->y[0], 0xF0FFFFFF );	// 1-3
@@ -238,9 +230,12 @@ void makeTransforms( void )
 						}
 						SDL_Flip( screen );
 						break;
+					default:
+						break;
 				}
 			}
 		}
+		down = false;
 		if( done )	// abort - retry coordinate input for original rectangle?
 			continue;
 		boxes.push_back( q );
@@ -252,6 +247,7 @@ void makeTransforms( void )
 			redrawFractal = true;
 		render();
 	}
+	render();
 	/* Now edit stuff */
 	done = false;
 	while( !done )
@@ -265,19 +261,35 @@ void makeTransforms( void )
 					{
 						if( pointActive )
 						{
-							/* TODO: make these move more naturally - they are confusing */
+							/* TODO: make these move more naturally - they are still confusing */
 							boxes[whichPoint[0]]->x[whichPoint[1]] += event.motion.xrel;		//
 							boxes[whichPoint[0]]->y[whichPoint[1]] += event.motion.yrel;		// Move two points parallel relative to mouse movement
 							boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4] += event.motion.xrel;	//
 							boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4] += event.motion.yrel;	//
 							q = boxes[whichPoint[0]];
-							temp = crunch( q );
-							tfs[whichPoint[0]]->a = temp->a;
-							tfs[whichPoint[0]]->b = temp->b;
-							tfs[whichPoint[0]]->c = temp->c;
-							tfs[whichPoint[0]]->d = temp->d;
-							tfs[whichPoint[0]]->e = temp->e;
-							tfs[whichPoint[0]]->f = temp->f;
+							if( whichPoint[0] == 0 )	// control selected - redo numbers for all the transformations
+							{
+								for( int i = 1; i < boxes.size(); i++ )
+								{
+									temp = crunch2( boxes[i], q );	// crunch transformation for box i
+									tfs[i]->a = temp->a;
+									tfs[i]->b = temp->b;
+									tfs[i]->c = temp->c;
+									tfs[i]->d = temp->d;
+									tfs[i]->e = temp->e;
+									tfs[i]->f = temp->f;
+								}
+							}
+							else
+							{
+								temp = crunch( q );
+								tfs[whichPoint[0]]->a = temp->a;
+								tfs[whichPoint[0]]->b = temp->b;
+								tfs[whichPoint[0]]->c = temp->c;
+								tfs[whichPoint[0]]->d = temp->d;
+								tfs[whichPoint[0]]->e = temp->e;
+								tfs[whichPoint[0]]->f = temp->f;
+							}
 						}
 						else if( regionActive )
 						{
@@ -287,29 +299,46 @@ void makeTransforms( void )
 								boxes[whichRegion]->y[i] += event.motion.yrel;
 							}
 							q = boxes[whichRegion];
-							temp = crunch( q );
-							tfs[whichRegion]->a = temp->a;
-							tfs[whichRegion]->b = temp->b;
-							tfs[whichRegion]->c = temp->c;
-							tfs[whichRegion]->d = temp->d;
-							tfs[whichRegion]->e = temp->e;
-							tfs[whichRegion]->f = temp->f;
+							if( whichRegion == 0 )	// control selected - redo numbers for all the transformations
+							{
+								for( int i = 1; i < boxes.size(); i++ )
+								{
+									temp = crunch2( boxes[i], q );
+									tfs[i]->a = temp->a;
+									tfs[i]->b = temp->b;
+									tfs[i]->c = temp->c;
+									tfs[i]->d = temp->d;
+									tfs[i]->e = temp->e;
+									tfs[i]->f = temp->f;
+								}
+							}
+							else
+							{
+								temp = crunch( q );
+								tfs[whichRegion]->a = temp->a;
+								tfs[whichRegion]->b = temp->b;
+								tfs[whichRegion]->c = temp->c;
+								tfs[whichRegion]->d = temp->d;
+								tfs[whichRegion]->e = temp->e;
+								tfs[whichRegion]->f = temp->f;
+							}
 						}
 						render();
-						// chaos(false);	// ?
-						// SDL_Flip( screen );
 					}
-					else if( activate( event.button.x, event.button.y ) )	// mouse near point
+					else if( activate( event.button.x, event.button.y ) )	// near a point or region
 					{
-						render();	// refresh the screen
-						// chaos(false);
-						// SDL_Flip( screen );
+						if( !activated || newActive )
+						{
+							activated = true;
+							newActive = false;
+							render();	// refresh the screen
+						}
 					}
-					else	// now not over a region
+					else if( activated )	// was near a point or region, now not
 					{
+						activated = false;
+						newActive = true;
 						render();
-						// chaos();
-						// SDL_Flip( screen );
 					}
 					break;
 				case SDL_MOUSEBUTTONDOWN:
@@ -336,38 +365,26 @@ void makeTransforms( void )
 		}
 	}
 }
-T* crunch( pts *q )
+T* crunch( pts *p )
 {
 	T *temp;
 	temp = new T;
-	temp->a = (-double(q->x[1])*double(boxes[0]->y[0])+double(q->x[2])*double(boxes[0]->y[0])+double(q->x[0])*double(boxes[0]->y[1])-double(q->x[2])*double(boxes[0]->y[1])-double(q->x[0])*double(boxes[0]->y[2])+double(q->x[1])*double(boxes[0]->y[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
-	temp->b = (double(q->x[1])*double(boxes[0]->x[0])-double(q->x[2])*double(boxes[0]->x[0])-double(q->x[0])*double(boxes[0]->x[1])+double(q->x[2])*double(boxes[0]->x[1])+double(q->x[0])*double(boxes[0]->x[2])-double(q->x[1])*double(boxes[0]->x[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
-	temp->e = (-double(q->x[2])*double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(q->x[1])*double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(q->x[2])*double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(q->x[0])*double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(q->x[1])*double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(q->x[0])*double(boxes[0]->x[1])*double(boxes[0]->y[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
+	temp->a = (-double(p->x[1])*double(boxes[0]->y[0])+double(p->x[2])*double(boxes[0]->y[0])+double(p->x[0])*double(boxes[0]->y[1])-double(p->x[2])*double(boxes[0]->y[1])-double(p->x[0])*double(boxes[0]->y[2])+double(p->x[1])*double(boxes[0]->y[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
+	temp->b = (double(p->x[1])*double(boxes[0]->x[0])-double(p->x[2])*double(boxes[0]->x[0])-double(p->x[0])*double(boxes[0]->x[1])+double(p->x[2])*double(boxes[0]->x[1])+double(p->x[0])*double(boxes[0]->x[2])-double(p->x[1])*double(boxes[0]->x[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
+	temp->e = (-double(p->x[2])*double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(p->x[1])*double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(p->x[2])*double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(p->x[0])*double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(p->x[1])*double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(p->x[0])*double(boxes[0]->x[1])*double(boxes[0]->y[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
 
-	temp->c = (-double(q->y[1])*double(boxes[0]->y[0])+double(q->y[2])*double(boxes[0]->y[0])+double(q->y[0])*double(boxes[0]->y[1])-double(q->y[2])*double(boxes[0]->y[1])-double(q->y[0])*double(boxes[0]->y[2])+double(q->y[1])*double(boxes[0]->y[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
-	temp->d = (double(q->y[1])*double(boxes[0]->x[0])-double(q->y[2])*double(boxes[0]->x[0])-double(q->y[0])*double(boxes[0]->x[1])+double(q->y[2])*double(boxes[0]->x[1])+double(q->y[0])*double(boxes[0]->x[2])-double(q->y[1])*double(boxes[0]->x[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
-	temp->f = (-double(q->y[2])*double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(q->y[1])*double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(q->y[2])*double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(q->y[0])*double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(q->y[1])*double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(q->y[0])*double(boxes[0]->x[1])*double(boxes[0]->y[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
+	temp->c = (-double(p->y[1])*double(boxes[0]->y[0])+double(p->y[2])*double(boxes[0]->y[0])+double(p->y[0])*double(boxes[0]->y[1])-double(p->y[2])*double(boxes[0]->y[1])-double(p->y[0])*double(boxes[0]->y[2])+double(p->y[1])*double(boxes[0]->y[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
+	temp->d = (double(p->y[1])*double(boxes[0]->x[0])-double(p->y[2])*double(boxes[0]->x[0])-double(p->y[0])*double(boxes[0]->x[1])+double(p->y[2])*double(boxes[0]->x[1])+double(p->y[0])*double(boxes[0]->x[2])-double(p->y[1])*double(boxes[0]->x[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
+	temp->f = (-double(p->y[2])*double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(p->y[1])*double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(p->y[2])*double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(p->y[0])*double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(p->y[1])*double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(p->y[0])*double(boxes[0]->x[1])*double(boxes[0]->y[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
 
 	cout << temp->a << " " << temp->b << " " << temp->c << " "  << temp->d << " "  << temp->e << " "  << temp->f << endl;
-	// tfs.push_back( temp );
-	redrawFractal = true;	// TODO: make this so it happens when temp is pushed
+	redrawFractal = true;
 	return temp;
 }
-T* crunch2( pts *p, pts *q )
+T* crunch2( pts *p, pts *q )	// TODO: can this have q default to boxes[0]? it didn't work last I tried it...
 {
 	T *temp;
 	temp = new T;
-	// temp->a = (-double(q->x[1])*double(p->y[0])+double(q->x[2])*double(p->y[0])+double(q->x[0])*double(p->y[1])-double(q->x[2])*double(p->y[1])-double(q->x[0])*double(p->y[2])+double(q->x[1])*double(p->y[2]))
-			 // /(-double(p->x[1])*double(p->y[0])+double(p->x[2])*double(p->y[0])+double(p->x[0])*double(p->y[1])-double(p->x[2])*double(p->y[1])-double(p->x[0])*double(p->y[2])+double(p->x[1])*double(p->y[2]));
-	 // temp->b = (double(q->x[1])*double(p->x[0])-double(q->x[2])*double(p->x[0])-double(q->x[0])*double(p->x[1])+double(q->x[2])*double(p->x[1])+double(q->x[0])*double(p->x[2])-double(q->x[1])*double(p->x[2]))
-			 // /(-double(p->x[1])*double(p->y[0])+double(p->x[2])*double(p->y[0])+double(p->x[0])*double(p->y[1])-double(p->x[2])*double(p->y[1])-double(p->x[0])*double(p->y[2])+double(p->x[1])*double(p->y[2]));
-	// temp->e = (-double(q->x[2])*double(p->x[1])*double(p->y[0])+double(q->x[1])*double(p->x[2])*double(p->y[0])+double(q->x[2])*double(p->x[0])*double(p->y[1])-double(q->x[0])*double(p->x[2])*double(p->y[1])-double(q->x[1])*double(p->x[0])*double(p->y[2])+double(q->x[0])*double(p->x[1])*double(p->y[2]))
-			 // /(-double(p->x[2])*double(p->y[0])+double(p->x[2])*double(p->y[0])+double(p->x[0])*double(p->y[1])-double(p->x[2])*double(p->y[1])-double(p->x[0])*double(p->y[2])+double(p->x[1])*double(p->y[2]));
-
-	// temp->c = (-double(q->y[1])*double(p->y[0])+double(q->y[2])*double(p->y[0])+double(q->y[0])*double(p->y[1])-double(q->y[2])*double(p->y[1])-double(q->y[0])*double(p->y[2])+double(q->y[1])*double(p->y[2]))/(-double(p->x[1])*double(p->y[0])+double(p->x[2])*double(p->y[0])+double(p->x[0])*double(p->y[1])-double(p->x[2])*double(p->y[1])-double(p->x[0])*double(p->y[2])+double(p->x[1])*double(p->y[2]));
-	// temp->d = (double(q->y[1])*double(p->x[0])-double(q->y[2])*double(p->x[0])-double(q->y[0])*double(p->x[1])+double(q->y[2])*double(p->x[1])+double(q->y[0])*double(p->x[2])-double(q->y[1])*double(p->x[2]))/(-double(p->x[1])*double(p->y[0])+double(p->x[2])*double(p->y[0])+double(p->x[0])*double(p->y[1])-double(p->x[2])*double(p->y[1])-double(p->x[0])*double(p->y[2])+double(p->x[1])*double(p->y[2]));
-	// temp->f = (-double(q->y[2])*double(p->x[1])*double(p->y[0])+double(q->y[1])*double(p->x[2])*double(p->y[0])+double(q->y[2])*double(p->x[0])*double(p->y[1])-double(q->y[0])*double(p->x[2])*double(p->y[1])-double(q->y[1])*double(p->x[0])*double(p->y[2])+double(q->y[0])*double(p->x[1])*double(p->y[2]))/(-double(p->x[1])*double(p->y[0])+double(p->x[2])*double(p->y[0])+double(p->x[0])*double(p->y[1])-double(p->x[2])*double(p->y[1])-double(p->x[0])*double(p->y[2])+double(p->x[1])*double(p->y[2]));
-
 	temp->a = double(-p->x[1]*q->y[0]+p->x[2]*q->y[0]+p->x[0]*q->y[1]-p->x[2]*q->y[1]-p->x[0]*q->y[2]+p->x[1]*q->y[2])/double(-q->x[1]*q->y[0]+q->x[2]*q->y[0]+q->x[0]*q->y[1]-q->x[2]*q->y[1]-q->x[0]*q->y[2]+q->x[1]*q->y[2]);
 	temp->b = double(p->x[1]*q->x[0]-p->x[2]*q->x[0]-p->x[0]*q->x[1]+p->x[2]*q->x[1]+p->x[0]*q->x[2]-p->x[1]*q->x[2])/double(-q->x[1]*q->y[0]+q->x[2]*q->y[0]+q->x[0]*q->y[1]-q->x[2]*q->y[1]-q->x[0]*q->y[2]+q->x[1]*q->y[2]);
 	temp->e = double(-p->x[2]*q->x[1]*q->y[0]+p->x[1]*q->x[2]*q->y[0]+p->x[2]*q->x[0]*q->y[1]-p->x[0]*q->x[2]*q->y[1]-p->x[1]*q->x[0]*q->y[2]+p->x[0]*q->x[1]*q->y[2])/double(-q->x[1]*q->y[0]+q->x[2]*q->y[0]+q->x[0]*q->y[1]-q->x[2]*q->y[1]-q->x[0]*q->y[2]+q->x[1]*q->y[2]);
@@ -377,7 +394,7 @@ T* crunch2( pts *p, pts *q )
 	temp->f = double(-p->y[2]*q->x[1]*q->y[0]+p->y[1]*q->x[2]*q->y[0]+p->y[2]*q->x[0]*q->y[1]-p->y[0]*q->x[2]*q->y[1]-p->y[1]*q->x[0]*q->y[2]+p->y[0]*q->x[1]*q->y[2])/double(-q->x[1]*q->y[0]+q->x[2]*q->y[0]+q->x[0]*q->y[1]-q->x[2]*q->y[1]-q->x[0]*q->y[2]+q->x[1]*q->y[2]);
 	
 	cout << temp->a << " " << temp->b << " " << temp->c << " "  << temp->d << " "  << temp->e << " "  << temp->f << endl;
-	redrawFractal = true;	// TODO: make this so it happens when temp is pushed?
+	redrawFractal = true;
 	return temp;
 }
 void deterministic( void )
@@ -440,12 +457,13 @@ void detMove( void )
 	SDL_BlitSurface( swap, NULL, screen, NULL );
 	delete swap;
 }
-void render( void )
+void render( bool flip )
 {
 	SDL_FillRect( screen, NULL, 0 );
 	drawRects();	// draw rectangles
 	drawFractal();	// draw fractal
-	SDL_Flip( screen );
+	if( flip )
+		SDL_Flip( screen );
 }
 void drawRects( void )
 {
@@ -453,22 +471,40 @@ void drawRects( void )
 
 	if( boxes.size() > 0 )	// make sure there is something to draw
 	{
-		polygonColor( controls, boxes[0]->x, boxes[0]->y, 4, 0xFF0000FF );	// draw control rectangle in red
+		polygonColor( controls, boxes[0]->x, boxes[0]->y, 4, 0xFF0000AF );	// draw control rectangle in red
+		for( int i = 0; i < 4; i++ )	// control circles
+			circleColor( controls, boxes[0]->x[i], boxes[0]->y[i], 7, 0xFFFFFFFF - 0xFF00000 * 100*i );
+			
 		for( int i = 1; i < boxes.size(); i++ )
 		{
 			polygonColor( controls, boxes[i]->x, boxes[i]->y, 4, 0xFFFFFFFF );	// draw transformation rectangles
 
 			for( int j = 0; j < 4; j++ )
-				circleColor( controls, boxes[i]->x[j], boxes[i]->y[j], 7, 0xFFFFFF7F );	// draw circles on rectangle corners
+				circleColor( controls, boxes[i]->x[j], boxes[i]->y[j], 7, 0xFFFFFFFF - 0xFF00000 * 100*j);	// draw circles on rectangle corners
 			if( pointActive )
 			{
-				filledCircleColor( controls, boxes[whichPoint[0]]->x[whichPoint[1]], boxes[whichPoint[0]]->y[whichPoint[1]], 7, 0x7F7F007F );	// draw active circle (under pointer)
-				filledCircleColor( controls, boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x777700FF );	// draw secondary circle (also to be moved)
+				if( whichPoint[0] == 0 )
+				{
+					filledCircleColor( controls, boxes[whichPoint[0]]->x[ whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F00007F );	// draw active circle (under pointer)
+					filledCircleColor( controls, boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x7700007F );	// draw secondary circle (also to be moved)
+					circleColor( controls,       boxes[whichPoint[0]]->x[ whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F00007F );	// draw active circle (under pointer)
+					circleColor( controls,       boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x7700007F );	// draw secondary circle (also to be moved)
+				}
+				else
+				{
+					filledCircleColor( controls, boxes[whichPoint[0]]->x [whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F7F007F );	// draw active circle (under pointer)
+					filledCircleColor( controls, boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x777700FF );	// draw secondary circle (also to be moved)
+					circleColor(       controls, boxes[whichPoint[0]]->x[ whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F7F007F );	// draw active circle (under pointer)
+					circleColor(       controls, boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x777700FF );	// draw secondary circle (also to be moved)
+				}
 			}
 		}
 		if( regionActive )	// highlight region
 		{
-			filledPolygonColor( controls, boxes[whichRegion]->x, boxes[whichRegion]->y, 4, 0x7F7F007F );
+			if( whichRegion == 0 )
+				filledPolygonColor( controls, boxes[whichRegion]->x, boxes[whichRegion]->y, 4, 0x7F00007F );
+			else
+				filledPolygonColor( controls, boxes[whichRegion]->x, boxes[whichRegion]->y, 4, 0x7F7F007F );
 		}
 	}
 	SDL_BlitSurface( controls, NULL, screen, NULL );
@@ -500,7 +536,7 @@ void chaos( bool quick )
 		x = xp;
 		y = yp;
 	}
-	for( j; j < 500; j++ )
+	for( ; j < 500; j++ )
 	{
 		for( int i = 0; i < 50; i++ )
 		{
@@ -518,15 +554,6 @@ double dist2( double x, double y, double x0, double y0 )
 {
 	return (x-x0)*(x-x0) + (y-y0)*(y-y0);
 }
-/* TODO: correct this to only detect the mouse inside the parallelogram, not within its bounding box */
-int det( int x0, int y0, int x1, int y1 )
-{
-	return x0*y1-x1*y0;
-}
-double square( double x )
-{
-	return x*x;
-}
 bool inRegion( int x, int y, int &r )
 {
 	double xn,yn;
@@ -538,7 +565,8 @@ bool inRegion( int x, int y, int &r )
 	p->x[2] = 100;	p->y[2] = 100;	// 
 	p->x[3] = 0;	p->y[3] = 100;	// 
 
-	for( int i = 1; i < boxes.size(); i++ )	// check each transformation box, excluding the control box
+	// for( int i = 1; i < boxes.size(); i++ )	// check each transformation box, excluding the control box
+	for( int i = boxes.size() - 1; i >= 0; i-- )
 	{
 		cout << "i=" << i << endl;
 		q = boxes[i];
@@ -556,7 +584,8 @@ bool inRegion( int x, int y, int &r )
 bool nearPoint( double x, double y, int &r, int &p )
 {
 	/* TODO: handle cases where mouse is near more than one point - take the closest one */
-	for( int i = 1; i < boxes.size(); i++ )
+	// for( int i = 1; i < boxes.size(); i++ )
+	for( int i = boxes.size() - 1; i >= 0; i-- )
 	{
 		for( int j = 0; j < 4; j++ )
 		{
@@ -581,13 +610,22 @@ bool activate( Sint16 x, Sint16 y )
 		regionActive = false;
 		whichPoint[0] = r;
 		whichPoint[1] = p;
+		newActive = true;
 		return true;
 	}
 	else if( inRegion( x, y, r ) )
 	{
-		pointActive = false;
+		if( pointActive )
+		{
+			pointActive = false;
+			newActive = true;
+		}
 		regionActive = true;
-		whichRegion = r;
+		if( r != whichRegion )
+		{
+			newActive = true;
+			whichRegion = r;
+		}
 		return true;
 	}
 	pointActive = regionActive = false;
