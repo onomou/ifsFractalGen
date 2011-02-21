@@ -39,3 +39,5 @@ Solve a*x + b*y + e = x' and c*x + d*y + f = y' for a,b,c,d,e,f given n=1 points
  0 | 0 | 1 | (-r3 x2 y1+q2 x3 y1+r3 x1 y2-p1 x3 y2-q2 x1 y3+p1 x2 y3)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3))
  and the same with xpi replaced by ypi
 http://www.wolframalpha.com/input/?i=row+reduce+{{x1%2Cy1%2C1%2Cp1}%2C{x2%2Cy2%2C1%2Cq2}%2C{x3%2Cy3%2C1%2Cr3}}
+
+Linear Transformations: See 1.8 p.79 in the Linear Algebra text
