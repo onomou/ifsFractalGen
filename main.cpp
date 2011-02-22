@@ -25,7 +25,7 @@ struct pts
 vector<pts*> boxes;
 SDL_Surface *screen, *controls, *fractal;
 bool pointActive, regionActive,redrawFractal, newActive;
-int whichPoint[2],whichRegion;	// TODO: merge these two - no need to be redundant
+int whichPoint,whichRegion;
 // Uint32 tick;
 
 Uint32 getpix( SDL_Surface *surface, int x, int y );
@@ -79,7 +79,7 @@ int main( int argc, char* argv[] )
 	/* End SDL initialization */
 	
 	redrawFractal = newActive = false;
-	whichRegion = whichPoint[0] = whichPoint[1] = 0;
+	whichRegion = whichPoint = 0;
 
 	makeTransforms();
 	SDL_FillRect( screen, NULL, 0 );
@@ -266,12 +266,12 @@ void makeTransforms( void )
 						{
 							redrawFractal = true;
 							/* TODO: make these move more naturally - they are still confusing */
-							boxes[whichPoint[0]]->x[whichPoint[1]] += event.motion.xrel;		//
-							boxes[whichPoint[0]]->y[whichPoint[1]] += event.motion.yrel;		// Move two points parallel relative to mouse movement
-							boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4] += event.motion.xrel;	//
-							boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4] += event.motion.yrel;	//
-							q = boxes[whichPoint[0]];
-							if( whichPoint[0] == 0 )	// control selected - redo numbers for all the transformations
+							boxes[whichRegion]->x[whichPoint] += event.motion.xrel;		//
+							boxes[whichRegion]->y[whichPoint] += event.motion.yrel;		// Move two points parallel relative to mouse movement
+							boxes[whichRegion]->x[(whichPoint+1)%4] += event.motion.xrel;	//
+							boxes[whichRegion]->y[(whichPoint+1)%4] += event.motion.yrel;	//
+							q = boxes[whichRegion];
+							if( whichRegion == 0 )	// control selected - redo numbers for all the transformations
 							{
 								for( int i = 1; i < boxes.size(); i++ )
 								{
@@ -287,12 +287,12 @@ void makeTransforms( void )
 							else
 							{
 								temp = crunch( q );
-								tfs[whichPoint[0]]->a = temp->a;
-								tfs[whichPoint[0]]->b = temp->b;
-								tfs[whichPoint[0]]->c = temp->c;
-								tfs[whichPoint[0]]->d = temp->d;
-								tfs[whichPoint[0]]->e = temp->e;
-								tfs[whichPoint[0]]->f = temp->f;
+								tfs[whichRegion]->a = temp->a;
+								tfs[whichRegion]->b = temp->b;
+								tfs[whichRegion]->c = temp->c;
+								tfs[whichRegion]->d = temp->d;
+								tfs[whichRegion]->e = temp->e;
+								tfs[whichRegion]->f = temp->f;
 							}
 						}
 						else if( regionActive )
@@ -489,19 +489,19 @@ void drawRects( void )
 				circleColor( controls, boxes[i]->x[j], boxes[i]->y[j], 7, 0xFFFFFF77 - 0xFF00000 * 100*j);	// draw circles on rectangle corners
 			if( pointActive )
 			{
-				if( whichPoint[0] == 0 )
+				if( whichRegion == 0 )
 				{
-					filledCircleColor( controls, boxes[whichPoint[0]]->x[ whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F000070 );	// draw active circle (under pointer)
-					filledCircleColor( controls, boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x77000070 );	// draw secondary circle (also to be moved)
-					circleColor( controls,       boxes[whichPoint[0]]->x[ whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F000070 );	// draw active circle (under pointer)
-					circleColor( controls,       boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x77000070 );	// draw secondary circle (also to be moved)
+					filledCircleColor( controls, boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F000070 );	// draw active circle (under pointer)
+					filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77000070 );	// draw secondary circle (also to be moved)
+					circleColor( controls,       boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F000070 );	// draw active circle (under pointer)
+					circleColor( controls,       boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77000070 );	// draw secondary circle (also to be moved)
 				}
 				else
 				{
-					filledCircleColor( controls, boxes[whichPoint[0]]->x [whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F7F0070 );	// draw active circle (under pointer)
-					filledCircleColor( controls, boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
-					circleColor(       controls, boxes[whichPoint[0]]->x[ whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F7F0070 );	// draw active circle (under pointer)
-					circleColor(       controls, boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
+					filledCircleColor( controls, boxes[whichRegion]->x [whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F7F0070 );	// draw active circle (under pointer)
+					filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
+					circleColor(       controls, boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F7F0070 );	// draw active circle (under pointer)
+					circleColor(       controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
 				}
 			}
 		}
@@ -620,8 +620,8 @@ bool activate( Sint16 x, Sint16 y )
 	{
 		pointActive = true;
 		regionActive = false;
-		whichPoint[0] = r;
-		whichPoint[1] = p;
+		whichRegion = r;
+		whichPoint = p;
 		newActive = true;
 		return true;
 	}
