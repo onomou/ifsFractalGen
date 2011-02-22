@@ -261,6 +261,7 @@ void makeTransforms( void )
 					{
 						if( pointActive )
 						{
+							redrawFractal = true;
 							/* TODO: make these move more naturally - they are still confusing */
 							boxes[whichPoint[0]]->x[whichPoint[1]] += event.motion.xrel;		//
 							boxes[whichPoint[0]]->y[whichPoint[1]] += event.motion.yrel;		// Move two points parallel relative to mouse movement
@@ -293,6 +294,7 @@ void makeTransforms( void )
 						}
 						else if( regionActive )
 						{
+							redrawFractal = true;
 							for( int i = 0; i < 4; i++ )	// move all four points parallel relative to the mouse movement
 							{
 								boxes[whichRegion]->x[i] += event.motion.xrel;
@@ -377,8 +379,8 @@ T* crunch( pts *p )
 	temp->d = (double(p->y[1])*double(boxes[0]->x[0])-double(p->y[2])*double(boxes[0]->x[0])-double(p->y[0])*double(boxes[0]->x[1])+double(p->y[2])*double(boxes[0]->x[1])+double(p->y[0])*double(boxes[0]->x[2])-double(p->y[1])*double(boxes[0]->x[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
 	temp->f = (-double(p->y[2])*double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(p->y[1])*double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(p->y[2])*double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(p->y[0])*double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(p->y[1])*double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(p->y[0])*double(boxes[0]->x[1])*double(boxes[0]->y[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
 
-	cout << temp->a << " " << temp->b << " " << temp->c << " "  << temp->d << " "  << temp->e << " "  << temp->f << endl;
-	redrawFractal = true;
+	// cout << temp->a << " " << temp->b << " " << temp->c << " "  << temp->d << " "  << temp->e << " "  << temp->f << endl;
+	// redrawFractal = true;
 	return temp;
 }
 T* crunch2( pts *p, pts *q )	// TODO: can this have q default to boxes[0]? it didn't work last I tried it...
@@ -393,8 +395,8 @@ T* crunch2( pts *p, pts *q )	// TODO: can this have q default to boxes[0]? it di
 	temp->d = double(p->y[1]*q->x[0]-p->y[2]*q->x[0]-p->y[0]*q->x[1]+p->y[2]*q->x[1]+p->y[0]*q->x[2]-p->y[1]*q->x[2])/double(-q->x[1]*q->y[0]+q->x[2]*q->y[0]+q->x[0]*q->y[1]-q->x[2]*q->y[1]-q->x[0]*q->y[2]+q->x[1]*q->y[2]);
 	temp->f = double(-p->y[2]*q->x[1]*q->y[0]+p->y[1]*q->x[2]*q->y[0]+p->y[2]*q->x[0]*q->y[1]-p->y[0]*q->x[2]*q->y[1]-p->y[1]*q->x[0]*q->y[2]+p->y[0]*q->x[1]*q->y[2])/double(-q->x[1]*q->y[0]+q->x[2]*q->y[0]+q->x[0]*q->y[1]-q->x[2]*q->y[1]-q->x[0]*q->y[2]+q->x[1]*q->y[2]);
 	
-	cout << temp->a << " " << temp->b << " " << temp->c << " "  << temp->d << " "  << temp->e << " "  << temp->f << endl;
-	redrawFractal = true;
+	// cout << temp->a << " " << temp->b << " " << temp->c << " "  << temp->d << " "  << temp->e << " "  << temp->f << endl;
+	// redrawFractal = true;
 	return temp;
 }
 void deterministic( void )
@@ -471,40 +473,40 @@ void drawRects( void )
 
 	if( boxes.size() > 0 )	// make sure there is something to draw
 	{
-		polygonColor( controls, boxes[0]->x, boxes[0]->y, 4, 0xFF0000AF );	// draw control rectangle in red
+		polygonColor( controls, boxes[0]->x, boxes[0]->y, 4, 0xFF000077 );	// draw control rectangle in red
 		for( int i = 0; i < 4; i++ )	// control circles
-			circleColor( controls, boxes[0]->x[i], boxes[0]->y[i], 7, 0xFFFFFFFF - 0xFF00000 * 100*i );
+			circleColor( controls, boxes[0]->x[i], boxes[0]->y[i], 7, 0xFFFFFF77 - 0xFF00000 * 100*i );
 			
 		for( int i = 1; i < boxes.size(); i++ )
 		{
-			polygonColor( controls, boxes[i]->x, boxes[i]->y, 4, 0xFFFFFFFF );	// draw transformation rectangles
+			polygonColor( controls, boxes[i]->x, boxes[i]->y, 4, 0xFFFFFF77 );	// draw transformation rectangles
 
 			for( int j = 0; j < 4; j++ )
-				circleColor( controls, boxes[i]->x[j], boxes[i]->y[j], 7, 0xFFFFFFFF - 0xFF00000 * 100*j);	// draw circles on rectangle corners
+				circleColor( controls, boxes[i]->x[j], boxes[i]->y[j], 7, 0xFFFFFF77 - 0xFF00000 * 100*j);	// draw circles on rectangle corners
 			if( pointActive )
 			{
 				if( whichPoint[0] == 0 )
 				{
-					filledCircleColor( controls, boxes[whichPoint[0]]->x[ whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F00007F );	// draw active circle (under pointer)
-					filledCircleColor( controls, boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x7700007F );	// draw secondary circle (also to be moved)
-					circleColor( controls,       boxes[whichPoint[0]]->x[ whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F00007F );	// draw active circle (under pointer)
-					circleColor( controls,       boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x7700007F );	// draw secondary circle (also to be moved)
+					filledCircleColor( controls, boxes[whichPoint[0]]->x[ whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F000070 );	// draw active circle (under pointer)
+					filledCircleColor( controls, boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x77000070 );	// draw secondary circle (also to be moved)
+					circleColor( controls,       boxes[whichPoint[0]]->x[ whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F000070 );	// draw active circle (under pointer)
+					circleColor( controls,       boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x77000070 );	// draw secondary circle (also to be moved)
 				}
 				else
 				{
-					filledCircleColor( controls, boxes[whichPoint[0]]->x [whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F7F007F );	// draw active circle (under pointer)
-					filledCircleColor( controls, boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x777700FF );	// draw secondary circle (also to be moved)
-					circleColor(       controls, boxes[whichPoint[0]]->x[ whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F7F007F );	// draw active circle (under pointer)
-					circleColor(       controls, boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x777700FF );	// draw secondary circle (also to be moved)
+					filledCircleColor( controls, boxes[whichPoint[0]]->x [whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F7F0070 );	// draw active circle (under pointer)
+					filledCircleColor( controls, boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
+					circleColor(       controls, boxes[whichPoint[0]]->x[ whichPoint[1]],      boxes[whichPoint[0]]->y[ whichPoint[1]],      7, 0x7F7F0070 );	// draw active circle (under pointer)
+					circleColor(       controls, boxes[whichPoint[0]]->x[(whichPoint[1]+1)%4], boxes[whichPoint[0]]->y[(whichPoint[1]+1)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
 				}
 			}
 		}
 		if( regionActive )	// highlight region
 		{
 			if( whichRegion == 0 )
-				filledPolygonColor( controls, boxes[whichRegion]->x, boxes[whichRegion]->y, 4, 0x7F00007F );
+				filledPolygonColor( controls, boxes[whichRegion]->x, boxes[whichRegion]->y, 4, 0x7F000070 );
 			else
-				filledPolygonColor( controls, boxes[whichRegion]->x, boxes[whichRegion]->y, 4, 0x7F7F007F );
+				filledPolygonColor( controls, boxes[whichRegion]->x, boxes[whichRegion]->y, 4, 0x7F7F0070 );
 		}
 	}
 	SDL_BlitSurface( controls, NULL, screen, NULL );
@@ -520,9 +522,21 @@ void drawFractal( void )
 }
 void chaos( bool quick )
 {
-	int x,y,xp,yp,r,j;
+	int x,y,xp,yp,r,j, colors[tfs.size()][3];
 	x = rand() % screen->w;	// pick random point on screen	
 	y = rand() % screen->h;	//
+	// colors[0][0] = 255;					colors[0][1] = 0;				colors[0][2] = 0;
+	// colors[i][0] = 255;					colors[i][1] = 0;				colors[i][2] = 0;
+	// colors[tfs.size()][0] = 255;		colors[tfs.size()][1] = 0;		colors[tfs.size()][2] = 0;
+	
+	for( int i = 0; i < tfs.size(); i++ )
+	{
+		colors[i][0] = 0xFF * ( cos( 2.0*PI / (double)tfs.size() * i ) + 1.0 );
+		colors[i][1] = 0xFF * ( cos( 2.0*PI / (double)tfs.size() * ( i - 1.0 * (double)tfs.size() / 3 ) ) + 1 );
+		colors[i][1] = 0xFF * ( cos( 2.0*PI / (double)tfs.size() * ( i + 2.0 * (double)tfs.size() / 3 ) ) + 1 );
+	}
+	
+	// colorinc = 0xF00 / tfs.size();	// color increment to shade transformations different colors
 	if( quick )
 		j = 470;	// quick - skip a bunch of iterations
 	else
@@ -545,7 +559,7 @@ void chaos( bool quick )
 			yp = x * tfs[r]->c + y * tfs[r]->d + tfs[r]->f;
 			x = xp;
 			y = yp;
-			pixelColor( fractal, x, y, 0xFFFFFFFF );
+			pixelColor( fractal, x, y, 0x000000FF + colors[r][0]*0x1000000 + colors[r][1]*0x10000 + colors[r][2]*0x100);
 		}
 	}
 	redrawFractal = false;

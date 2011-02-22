@@ -582,7 +582,7 @@
 1297818443 c:\users\steven\dropbox\class\seminar\fractal generators - restructured\header.h
 	<SDL/SDL.h>
 
-1298330861 source:c:\users\steven\code\ifsfractalgen\main.cpp
+1298397941 source:c:\users\steven\code\ifsfractalgen\main.cpp
 	<SDL/SDL.h>
 	<SDL/SDL_gfxPrimitives.h>
 	<cmath>
@@ -592,7 +592,7 @@
 	<algorithm>
 	"header.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl.h
 	"SDL_main.h"
 	"SDL_stdinc.h"
 	"SDL_audio.h"
@@ -611,14 +611,14 @@
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_main.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_main.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_stdinc.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_stdinc.h
 	"SDL_config.h"
 	<sys/types.h>
 	<stdio.h>
@@ -644,17 +644,17 @@
 	<stdlib.h>
 	"close_code.h"
 
-1255796864 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_config.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_config.h
 	"SDL_platform.h"
 	<stdarg.h>
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_platform.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_platform.h
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\begin_code.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\begin_code.h
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\close_code.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\close_code.h
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_audio.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_audio.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_endian.h"
@@ -664,23 +664,23 @@
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_error.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_error.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_endian.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_endian.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_mutex.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_mutex.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_thread.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_thread.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_mutex.h"
@@ -688,24 +688,24 @@
 	<process.h>
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_rwops.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_rwops.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_cdrom.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_cdrom.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_cpuinfo.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_cpuinfo.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_events.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_events.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_active.h"
@@ -716,66 +716,66 @@
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_active.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_active.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_keyboard.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_keyboard.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_keysym.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_keysym.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_keysym.h
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_mouse.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_mouse.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_video.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_video.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_rwops.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_joystick.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_joystick.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_quit.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_quit.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_loadso.h
-	"SDL_stdinc.h"
-	"SDL_error.h"
-	"begin_code.h"
-	"close_code.h"
-
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_timer.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_loadso.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_version.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_version.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1253753047 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_gfxprimitives.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_gfxprimitives.h
 	<math.h>
 	"SDL.h"
 
-1297818443 c:\users\steven\code\ifsfractalgen\header.h
+1298332678 c:\users\steven\code\ifsfractalgen\header.h
 	<SDL/SDL.h>
 
