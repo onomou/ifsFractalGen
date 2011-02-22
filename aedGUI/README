@@ -1,0 +1,49 @@
+
+The aedGUI library
+==================
+
+The goal of this project is to create a cross-platform C++ Graphics
+User Interface library to be used with Simple DirectMedia Layer (SDL).
+It will be fast, non-intrusive and easy to use.
+
+
+Requirements
+------------
+
+aedGUI requires at least SDL 1.2.5 and FreeType 2.0 libraries. SDL_ttf is
+needed for rendering text, but if you don't have it, internal copy will be
+used. Additionally, you may want to install SDL_rtf to enable the aedStaticRTF
+widget which is used for displaying RTF text. If you want to build the OpenGL
+test program you'll need OpenGL libraries as well.
+
+NOTE: support for SDL 1.2.5 will be removed in version 0.2.0 (after that
+      we will only support SDL 1.2.6 and above).
+
+
+Building and installing from CVS
+--------------------------------
+
+First you need to get the sources from CVS:
+
+    cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/aedgui co aedGUI
+
+Then you run
+
+    ./autogen.sh
+
+and proceed as usual:
+
+    ./configure
+    make
+    make install
+
+
+Reporting bugs
+--------------
+
+Send all bug reports, comments and suggestions to our development mailing
+list <aedgui-developers@lists.sourceforge.net>. You can also contact us via
+forums at http://sourceforge.net/forum/?group_id=79749.
+
+The aedGUI Team
+http://aedgui.sf.net

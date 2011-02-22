@@ -1,0 +1,23 @@
+Changes in 0.1.8a:
+    o Added two bitmaps missing bitmaps on the distribution
+
+Changes in 0.1.8:
+    o XML support
+    o Windows can be dragged
+    o More bug fixing
+
+Changes in 0.1.7:
+    o Loadable theme support
+    o New signal and focus handling code
+    o Various cleanups and fixes
+    o Started writing documentation using doxygen
+    
+Changes in 0.1.6a:
+    o Rewrote the font manager
+    o Fixed some build problems
+    
+Changes in 0.1.6:
+    o Rewrote the rendering system
+    o Support for compiled-in fonts
+    o Migrated to autoconf/automake/libtool build system
+
