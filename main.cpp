@@ -1,5 +1,6 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_gfxPrimitives.h>
+#include <SDL/SDL_thread.h>
 #include <cmath>
 #include <vector>
 #include <iostream>
@@ -25,13 +26,14 @@ vector<pts*> boxes;
 SDL_Surface *screen, *controls, *fractal;
 bool pointActive, regionActive,redrawFractal, newActive;
 int whichPoint[2],whichRegion;	// TODO: merge these two - no need to be redundant
+// Uint32 tick;
 
 Uint32 getpix( SDL_Surface *surface, int x, int y );
 int getred( SDL_Surface *surface, int x, int y );
 bool getclick( Sint16 &x, Sint16 &y );
 void deterministic( void );
 void detMove( void );
-void chaos( bool quick = false );
+int chaos( void );
 double dist2( double x, double y, double x0, double y0 );
 void makeTransforms( void );
 
@@ -67,28 +69,29 @@ int main( int argc, char* argv[] )
 	SDL_putenv( "SDL_VIDEO_CENTERED=center" );	// center the video window
 	SDL_WM_SetCaption("IFS Fractal Generator", NULL); // sets the Window Title
 	const SDL_VideoInfo* myPointer = SDL_GetVideoInfo();	// get current display information (for height, width, color depth, etc.)
-	screen = SDL_SetVideoMode(  myPointer->current_w/2,  myPointer->current_h/2, 0, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_RESIZABLE);
+	screen = SDL_SetVideoMode(  myPointer->current_w/1.5,  myPointer->current_h/1.5, 0, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_RESIZABLE);
 	
 	controls = SDL_ConvertSurface( screen, screen->format, screen->flags|SDL_SRCALPHA );	// add alpha channel to surface
 	SDL_SetColorKey( controls, SDL_SRCCOLORKEY, 0 );		// set alpha color to black - blits will copy only pixels not black
-	// SDL_SetAlpha( controls, 0, 255 );	// don't use surface alpha value - blits will use SDL_SRCCOLORKEY of the surface
 	
 	fractal  = SDL_ConvertSurface( screen, screen->format, screen->flags|SDL_SRCALPHA );
 	SDL_SetColorKey( fractal, SDL_SRCCOLORKEY, 0 );
-	// SDL_SetAlpha( fractal, 0, 255 );
+	/* End SDL initialization */
+	
 	redrawFractal = newActive = false;
 	whichRegion = whichPoint[0] = whichPoint[1] = 0;
-	
-	/* End SDL initialization */
 
 	makeTransforms();
-	// deterministic();
 	SDL_FillRect( screen, NULL, 0 );
 	drawFractal();
 	SDL_Flip( screen );
 	
 	Sint16 x,y;
 	getclick(x,y);
+	
+	SDL_FreeSurface( screen ); 
+	SDL_FreeSurface( controls ); 
+	SDL_FreeSurface( fractal ); 
 	return 0;
 }
 Uint32 getpix( SDL_Surface *surface, int x, int y )
@@ -461,6 +464,7 @@ void detMove( void )
 }
 void render( bool flip )
 {
+	// tick = SDL_GetTicks() + 30;
 	SDL_FillRect( screen, NULL, 0 );
 	drawRects();	// draw rectangles
 	drawFractal();	// draw fractal
@@ -513,21 +517,20 @@ void drawRects( void )
 }
 void drawFractal( void )
 {
-	if( redrawFractal )	// some control on the fractal set has changed
+	if( redrawFractal )//&& tick > SDL_GetTicks() )	// some control on the fractal set has changed
 	{
 		SDL_FillRect( fractal, NULL, 0 );	// blank fractal surface for redrawing
 		chaos();
 	}
 	SDL_BlitSurface( fractal, NULL, screen, NULL );
 }
-void chaos( bool quick )
+int chaos( void )
 {
-	int x,y,xp,yp,r,j, colors[tfs.size()][3];
-	x = rand() % screen->w;	// pick random point on screen	
-	y = rand() % screen->h;	//
-	// colors[0][0] = 255;					colors[0][1] = 0;				colors[0][2] = 0;
-	// colors[i][0] = 255;					colors[i][1] = 0;				colors[i][2] = 0;
-	// colors[tfs.size()][0] = 255;		colors[tfs.size()][1] = 0;		colors[tfs.size()][2] = 0;
+	int x,y,xp,yp,r, colors[tfs.size()][3],j=0;
+	//tick = SDL_GetTicks() + 20;
+	// x = rand() % screen->w;	// pick random point on screen	
+	// y = rand() % screen->h;	//
+	x = y = 30;	// faster than the previous two - by how much?
 	
 	for( int i = 0; i < tfs.size(); i++ )
 	{
@@ -536,13 +539,7 @@ void chaos( bool quick )
 		colors[i][1] = 0xFF * ( cos( 2.0*PI / (double)tfs.size() * ( i + 2.0 * (double)tfs.size() / 3 ) ) + 1 );
 	}
 	
-	// colorinc = 0xF00 / tfs.size();	// color increment to shade transformations different colors
-	if( quick )
-		j = 470;	// quick - skip a bunch of iterations
-	else
-		j = 0;
-
-	for( int i = 0; i < 50; i++ )	// do some iterations to get close to the attractor (don't plot)
+	for( int i = 0; i < 100; i++ )	// do some iterations to get close to the attractor (don't plot)
 	{
 		r = rand()%tfs.size();	// pick a random transformation
 		xp = x * tfs[r]->a + y * tfs[r]->b + tfs[r]->e;	// apply picked transformation
@@ -550,19 +547,21 @@ void chaos( bool quick )
 		x = xp;
 		y = yp;
 	}
-	for( ; j < 500; j++ )
+	for( int i = 0; i < 10000; i++ )	// 25000 is a good ballpark
+	// while( tick > SDL_GetTicks() )
 	{
-		for( int i = 0; i < 50; i++ )
-		{
-			r = rand()%tfs.size();
-			xp = x * tfs[r]->a + y * tfs[r]->b + tfs[r]->e;
-			yp = x * tfs[r]->c + y * tfs[r]->d + tfs[r]->f;
-			x = xp;
-			y = yp;
-			pixelColor( fractal, x, y, 0x000000FF + colors[r][0]*0x1000000 + colors[r][1]*0x10000 + colors[r][2]*0x100);
-		}
+		j++;
+		r = rand()%tfs.size();
+		xp = x * tfs[r]->a + y * tfs[r]->b + tfs[r]->e;
+		yp = x * tfs[r]->c + y * tfs[r]->d + tfs[r]->f;
+		x = xp;
+		y = yp;
+		
+		pixelColor( fractal, x, y, 0x000000FF + colors[r][0]*0x1000000 + colors[r][1]*0x10000 + colors[r][2]*0x100);
 	}
+	cout << j << endl;
 	redrawFractal = false;
+	return 0;
 }
 double dist2( double x, double y, double x0, double y0 )
 {
@@ -582,7 +581,6 @@ bool inRegion( int x, int y, int &r )
 	// for( int i = 1; i < boxes.size(); i++ )	// check each transformation box, excluding the control box
 	for( int i = boxes.size() - 1; i >= 0; i-- )
 	{
-		cout << "i=" << i << endl;
 		q = boxes[i];
 		t = crunch2( p, q );
 		xn = t->a * double(x) + t->b * double(y) + t->e;
