@@ -582,9 +582,10 @@
 1297818443 c:\users\steven\dropbox\class\seminar\fractal generators - restructured\header.h
 	<SDL/SDL.h>
 
-1298397941 source:c:\users\steven\code\ifsfractalgen\main.cpp
+1298454967 source:c:\users\steven\code\ifsfractalgen\main.cpp
 	<SDL/SDL.h>
 	<SDL/SDL_gfxPrimitives.h>
+	<SDL/SDL_thread.h>
 	<cmath>
 	<vector>
 	<iostream>
@@ -778,4 +779,546 @@
 
 1298332678 c:\users\steven\code\ifsfractalgen\header.h
 	<SDL/SDL.h>
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedgui.h
+	"dllmacros.h"
+	"aedTimer.h"
+	"aedWidget.h"
+	"aedWindow.h"
+	"aedStaticText.h"
+	"aedButton.h"
+	"aedTextBox.h"
+	"aedProgressBar.h"
+	"aedFont.h"
+	"aedApp.h"
+	"aedFrame.h"
+	"aedCheckBox.h"
+	"aedStaticImage.h"
+	"aedImage.h"
+	"aedImageBank.h"
+	"aedSlider.h"
+	"aedScrollBar.h"
+	"aedRadioButtonGroup.h"
+	"aedSignal.h"
+	"aedListBox.h"
+	"aedSpinner.h"
+	"aedCursor.h"
+	"aedLog.h"
+	"aedXmlFile.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\dllmacros.h
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedtimer.h
+	"aedObject.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedobject.h
+	<vector>
+	<map>
+	<string>
+	<algorithm>
+	<math.h>
+	<typeinfo>
+	"SDL.h"
+	"dllmacros.h"
+	"aedSignal.h"
+
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_audio.h"
+	"SDL_cdrom.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_loadso.h"
+	"SDL_mutex.h"
+	"SDL_rwops.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_video.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedsignal.h
+	<iostream>
+	<vector>
+	"dllmacros.h"
+	"SDL.h"
+	"aedCallBack.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedcallback.h
+	"dllmacros.h"
+	"aedFunctorNoArgs.h"
+	"aedFunctor1Arg.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedfunctornoargs.h
+	"aedFunctorBase.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedfunctorbase.h
+	<iostream>
+	"dllmacros.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedfunctor1arg.h
+	"aedFunctorBase.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedwidget.h
+	"aedObject.h"
+	"aedRect.h"
+	"aedColor.h"
+	"aedFont.h"
+	"aedTheme.h"
+	"aedApp.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedrect.h
+	<iostream>
+	"dllmacros.h"
+	"SDL.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedcolor.h
+	"dllmacros.h"
+	<iostream>
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedfont.h
+	"dllmacros.h"
+	"SDL.h"
+	"aedColor.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedtheme.h
+	<string>
+	"dllmacros.h"
+	"drawlibs.h"
+	"aedColor.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\drawlibs.h
+	"SDL.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedapp.h
+	<iostream>
+	<vector>
+	<string>
+	"dllmacros.h"
+	"aedFont.h"
+	"aedWidget.h"
+	"aedLog.h"
+	"aedTheme.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedlog.h
+	<iostream>
+	<ostream>
+	<fstream>
+	<vector>
+	"dllmacros.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedwindow.h
+	"dllmacros.h"
+	"aedWidget.h"
+	"aedStaticText.h"
+	"aedButton.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedstatictext.h
+	"aedWidget.h"
+	"aedFont.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedbutton.h
+	"dllmacros.h"
+	"aedWidget.h"
+	"aedImage.h"
+	"aedStaticText.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedimage.h
+	"dllmacros.h"
+	"SDL.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedtextbox.h
+	"aedStaticText.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedprogressbar.h
+	"aedWidget.h"
+	"aedStaticText.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedframe.h
+	"dllmacros.h"
+	"aedWidget.h"
+	"aedFont.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedcheckbox.h
+	"dllmacros.h"
+	"aedWidget.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedstaticimage.h
+	"aedWidget.h"
+	"aedImage.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedimagebank.h
+	<iostream>
+	<vector>
+	"SDL.h"
+	"dllmacros.h"
+	"aedImage.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedslider.h
+	"aedWidget.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedscrollbar.h
+	"aedSlider.h"
+	"aedButton.h"
+	"aedSignal.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedradiobuttongroup.h
+	"dllmacros.h"
+	"aedWidget.h"
+	"aedCheckBox.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedlistbox.h
+	"aedWidget.h"
+	"aedFont.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedspinner.h
+	"aedWidget.h"
+	"aedTextBox.h"
+	"aedButton.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedcursor.h
+	"SDL.h"
+	"dllmacros.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedxmlfile.h
+	"dllmacros.h"
+	"aedRect.h"
+	<string>
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan.hpp
+	<guichan/actionevent.hpp>
+	<guichan/actionlistener.hpp>
+	<guichan/graphics.hpp>
+	<guichan/color.hpp>
+	<guichan/deathlistener.hpp>
+	<guichan/event.hpp>
+	<guichan/exception.hpp>
+	<guichan/focushandler.hpp>
+	<guichan/font.hpp>
+	<guichan/gui.hpp>
+	<guichan/image.hpp>
+	<guichan/imagefont.hpp>
+	<guichan/imageloader.hpp>
+	<guichan/input.hpp>
+	<guichan/inputevent.hpp>
+	<guichan/key.hpp>
+	<guichan/keyevent.hpp>
+	<guichan/keyinput.hpp>
+	<guichan/keylistener.hpp>
+	<guichan/listmodel.hpp>
+	<guichan/mouseevent.hpp>
+	<guichan/mouseinput.hpp>
+	<guichan/mouselistener.hpp>
+	<guichan/rectangle.hpp>
+	<guichan/cliprectangle.hpp>
+	<guichan/widget.hpp>
+	<guichan/widgets/button.hpp>
+	<guichan/widgets/checkbox.hpp>
+	<guichan/widgets/container.hpp>
+	<guichan/widgets/dropdown.hpp>
+	<guichan/widgets/icon.hpp>
+	<guichan/widgets/label.hpp>
+	<guichan/widgets/listbox.hpp>
+	<guichan/widgets/scrollarea.hpp>
+	<guichan/widgets/slider.hpp>
+	<guichan/widgets/radiobutton.hpp>
+	<guichan/widgets/textbox.hpp>
+	<guichan/widgets/textfield.hpp>
+	<guichan/widgets/window.hpp>
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\actionevent.hpp
+	"guichan/event.hpp"
+	"guichan/platform.hpp"
+	<string>
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\event.hpp
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\platform.hpp
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\actionlistener.hpp
+	<string>
+	"guichan/actionevent.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\cliprectangle.hpp
+	"guichan/rectangle.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\rectangle.hpp
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\color.hpp
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\deathlistener.hpp
+	<string>
+	"guichan/event.hpp"
+	"guichan/platform.hpp"
+
+1168751032 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\exception.hpp
+	<string>
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\focushandler.hpp
+	<vector>
+	"guichan/platform.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\focuslistener.hpp
+	<string>
+	"guichan/event.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\font.hpp
+	<string>
+	"guichan/platform.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\genericinput.hpp
+	<queue>
+	"guichan/input.hpp"
+	"guichan/keyinput.hpp"
+	"guichan/mouseinput.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\input.hpp
+	"guichan/platform.hpp"
+
+1168749500 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\keyinput.hpp
+	"guichan/key.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\key.hpp
+	"guichan/platform.hpp"
+
+1168749500 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\mouseinput.hpp
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\graphics.hpp
+	<iosfwd>
+	<stack>
+	"guichan/cliprectangle.hpp"
+	"guichan/platform.hpp"
+
+1168749500 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\gui.hpp
+	<list>
+	"guichan/keyevent.hpp"
+	"guichan/mouseevent.hpp"
+	"guichan/mouseinput.hpp"
+	"guichan/platform.hpp"
+
+1168749500 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\keyevent.hpp
+	"guichan/inputevent.hpp"
+	"guichan/key.hpp"
+	"guichan/platform.hpp"
+
+1167774430 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\inputevent.hpp
+	"guichan/event.hpp"
+	"guichan/platform.hpp"
+
+1168749500 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\mouseevent.hpp
+	"guichan/inputevent.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\image.hpp
+	<string>
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\imagefont.hpp
+	<string>
+	"guichan/font.hpp"
+	"guichan/platform.hpp"
+	"guichan/rectangle.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\imageloader.hpp
+	<iosfwd>
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\keylistener.hpp
+	"guichan/keyevent.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\listmodel.hpp
+	<string>
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\mouselistener.hpp
+	"guichan/mouseevent.hpp"
+	"guichan/platform.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\selectionevent.hpp
+	"guichan/event.hpp"
+	"guichan/platform.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\selectionlistener.hpp
+	<string>
+	"guichan/selectionevent.hpp"
+	"guichan/platform.hpp"
+
+1169606580 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widget.hpp
+	<list>
+	<string>
+	"guichan/color.hpp"
+	"guichan/rectangle.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgetlistener.hpp
+	<string>
+	"guichan/event.hpp"
+	"guichan/platform.hpp"
+
+1168749500 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\button.hpp
+	<string>
+	"guichan/keylistener.hpp"
+	"guichan/mouseevent.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1167774432 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\checkbox.hpp
+	<string>
+	"guichan/keylistener.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1167720930 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\container.hpp
+	<list>
+	"guichan/basiccontainer.hpp"
+	"guichan/graphics.hpp"
+	"guichan/platform.hpp"
+
+1169606578 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\basiccontainer.hpp
+	<list>
+	"guichan/deathlistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1167774432 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\dropdown.hpp
+	"guichan/actionlistener.hpp"
+	"guichan/basiccontainer.hpp"
+	"guichan/deathlistener.hpp"
+	"guichan/focushandler.hpp"
+	"guichan/keylistener.hpp"
+	"guichan/listmodel.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widgets/listbox.hpp"
+	"guichan/widgets/scrollarea.hpp"
+
+1167774432 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\listbox.hpp
+	"guichan/keylistener.hpp"
+	"guichan/listmodel.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1167720930 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\scrollarea.hpp
+	<string>
+	"guichan/basiccontainer.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+
+1167720930 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\icon.hpp
+	"guichan/image.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\imagebutton.hpp
+	"guichan/platform.hpp"
+	"guichan/widgets/button.hpp"
+
+1167720930 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\label.hpp
+	<string>
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1167720930 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\slider.hpp
+	"guichan/keylistener.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1167774432 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\radiobutton.hpp
+	<map>
+	<string>
+	"guichan/keylistener.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\tab.hpp
+	<map>
+	<string>
+	"guichan/basiccontainer.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\tabbedarea.hpp
+	<map>
+	<string>
+	<vector>
+	"guichan/actionlistener.hpp"
+	"guichan/basiccontainer.hpp"
+	"guichan/keylistener.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+
+1167774432 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\textbox.hpp
+	<ctime>
+	<string>
+	<vector>
+	"guichan/keylistener.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1167774432 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\textfield.hpp
+	"guichan/keylistener.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+	<string>
+
+1167720930 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\window.hpp
+	<string>
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widgets/container.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\sdl.hpp
+	<guichan/sdl/sdlgraphics.hpp>
+	<guichan/sdl/sdlimage.hpp>
+	<guichan/sdl/sdlimageloader.hpp>
+	<guichan/sdl/sdlinput.hpp>
+	"platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\sdl\sdlgraphics.hpp
+	"SDL.h"
+	"guichan/color.hpp"
+	"guichan/graphics.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\sdl\sdlimage.hpp
+	"SDL.h"
+	<string>
+	"guichan/color.hpp"
+	"guichan/platform.hpp"
+	"guichan/image.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\sdl\sdlimageloader.hpp
+	"guichan/imageloader.hpp"
+	"guichan/platform.hpp"
+	"SDL.h"
+
+1168749500 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\sdl\sdlinput.hpp
+	<queue>
+	"SDL.h"
+	"guichan/input.hpp"
+	"guichan/keyinput.hpp"
+	"guichan/mouseinput.hpp"
+	"guichan/platform.hpp"
 

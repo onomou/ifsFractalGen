@@ -1,6 +1,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_gfxPrimitives.h>
 #include <SDL/SDL_thread.h>
+
 #include <cmath>
 #include <vector>
 #include <iostream>
@@ -23,9 +24,12 @@ struct pts
 	Sint16 x[4],y[4];
 };
 vector<pts*> boxes;
+
 SDL_Surface *screen, *controls, *fractal;
 bool pointActive, regionActive,redrawFractal, newActive;
 int whichPoint,whichRegion;
+T *activeT;	// transformation numbers for active region
+
 // Uint32 tick;
 
 Uint32 getpix( SDL_Surface *surface, int x, int y );
@@ -44,6 +48,8 @@ void drawFractal( void );
 bool activate( Sint16 x, Sint16 y );
 T* crunch( pts *p );
 T* crunch2( pts *p, pts *q );
+void invertActive( int &x, int &y );
+void transformActive( int &x, int &y );
 void swap( Sint16 *x, Sint16 *y )
 {
 	Sint16 t = *x;
@@ -51,12 +57,9 @@ void swap( Sint16 *x, Sint16 *y )
 	*y = t;
 }
 
-int main( int argc, char* argv[] )
+
+void init( void )
 {
-	srand ( time(NULL) );	// seed the RNG
-
-	/* Variables */
-
 	/* Initialize SDL */
 	if( SDL_Init( SDL_INIT_TIMER | SDL_INIT_VIDEO ) < 0 )
 	{
@@ -65,33 +68,51 @@ int main( int argc, char* argv[] )
 	}
     atexit(SDL_Quit);	// push SDL_Quit onto stack to be executed at program end
 
-	/* Initialize SDL window */
+	/* Initialize SDL windows */
 	SDL_putenv( "SDL_VIDEO_CENTERED=center" );	// center the video window
 	SDL_WM_SetCaption("IFS Fractal Generator", NULL); // sets the Window Title
 	const SDL_VideoInfo* myPointer = SDL_GetVideoInfo();	// get current display information (for height, width, color depth, etc.)
 	screen = SDL_SetVideoMode(  myPointer->current_w/1.5,  myPointer->current_h/1.5, 0, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_RESIZABLE);
-	
+
 	controls = SDL_ConvertSurface( screen, screen->format, screen->flags|SDL_SRCALPHA );	// add alpha channel to surface
 	SDL_SetColorKey( controls, SDL_SRCCOLORKEY, 0 );		// set alpha color to black - blits will copy only pixels not black
-	
+
 	fractal  = SDL_ConvertSurface( screen, screen->format, screen->flags|SDL_SRCALPHA );
 	SDL_SetColorKey( fractal, SDL_SRCCOLORKEY, 0 );
+
+	// SDL_EnableUNICODE(1);
+	// SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 	/* End SDL initialization */
-	
+
+
+
+	srand ( time(NULL) );	// seed the RNG
 	redrawFractal = newActive = false;
 	whichRegion = whichPoint = 0;
-
+	activeT = new T;
+}
+void run( void )
+{
 	makeTransforms();
 	SDL_FillRect( screen, NULL, 0 );
 	drawFractal();
 	SDL_Flip( screen );
-	
+}
+void halt( void )
+{
 	Sint16 x,y;
 	getclick(x,y);
-	
-	SDL_FreeSurface( screen ); 
-	SDL_FreeSurface( controls ); 
-	SDL_FreeSurface( fractal ); 
+
+	SDL_FreeSurface( screen );
+	SDL_FreeSurface( controls );
+	SDL_FreeSurface( fractal );
+}
+int main( int argc, char* argv[] )
+{
+	init();
+	run();
+	halt();
+
 	return 0;
 }
 Uint32 getpix( SDL_Surface *surface, int x, int y )
@@ -168,13 +189,13 @@ void makeTransforms( void )
 {
 	SDL_Event event;
 	bool done = false, dragging = false, down = false, activated = false;
+	int tx1, tx2, tx3, ty1, ty2, ty3, txm, tym, x, y;
 	T *temp;
-	pts *q;
-	
+	pts *p,*q;
+
 	/* Get rectangles */
 	for( int o = 0; !done; o++ )	// loop until done is set true, increment o each iteration
 	{
-		// cout << "makeTransforms in while !done loop\n";
 		q = new pts;
 		// while( !getclick( q->x[0],q->y[0] ) );	// get first point
 		for( int i = 0; i < 3; )
@@ -266,10 +287,62 @@ void makeTransforms( void )
 						{
 							redrawFractal = true;
 							/* TODO: make these move more naturally - they are still confusing */
+							/*
 							boxes[whichRegion]->x[whichPoint] += event.motion.xrel;		//
 							boxes[whichRegion]->y[whichPoint] += event.motion.yrel;		// Move two points parallel relative to mouse movement
 							boxes[whichRegion]->x[(whichPoint+1)%4] += event.motion.xrel;	//
 							boxes[whichRegion]->y[(whichPoint+1)%4] += event.motion.yrel;	//
+							q = boxes[whichRegion];
+							if( whichRegion == 0 )	// control selected - redo numbers for all the transformations
+							{
+								for( int i = 1; i < boxes.size(); i++ )
+								{
+									temp = crunch2( boxes[i], q );	// crunch transformation for box i
+									tfs[i]->a = temp->a;
+									tfs[i]->b = temp->b;
+									tfs[i]->c = temp->c;
+									tfs[i]->d = temp->d;
+									tfs[i]->e = temp->e;
+									tfs[i]->f = temp->f;
+								}
+							}
+							else
+							{
+								temp = crunch( q );
+								tfs[whichRegion]->a = temp->a;
+								tfs[whichRegion]->b = temp->b;
+								tfs[whichRegion]->c = temp->c;
+								tfs[whichRegion]->d = temp->d;
+								tfs[whichRegion]->e = temp->e;
+								tfs[whichRegion]->f = temp->f;
+							}
+							*/
+							// x = event.button.x + event.motion.xrel;
+							// y = event.button.y + event.motion.yrel;
+							boxes[whichRegion]->x[whichPoint] += event.motion.xrel;		//
+							boxes[whichRegion]->y[whichPoint] += event.motion.yrel;		// Move two points parallel relative to mouse movement
+							x = boxes[whichRegion]->x[whichPoint];
+							y = boxes[whichRegion]->y[whichPoint];
+							// txm = activeT->a * double(x) + activeT->b * double(y) + activeT->e;	// transform mouse into transformation coordinates
+							// tym = activeT->c * double(x) + activeT->d * double(y) + activeT->f;
+							transformActive( x, y );
+							tx1 = double(x - y) / 2;
+							ty1 = double(x + y) / 2;
+							tx3 = ty1;
+							ty3 = -tx1;
+							cout << x << "," << y << endl;
+							cout << tx1 << "," << ty1 << endl;
+							cout << tx3 << "," << ty3 << endl;
+							invertActive( y, x );
+							invertActive( tx1, ty1 );
+							invertActive( tx3, ty3 );
+							cout << x << "," << y << endl;
+							cout << tx1 << "," << ty1 << endl;
+							cout << tx3 << "," << ty3 << endl << endl;
+							boxes[whichRegion]->x[(whichPoint+3)%4] = tx1;
+							boxes[whichRegion]->y[(whichPoint+3)%4] = ty1;
+							boxes[whichRegion]->x[(whichPoint+1)%4] = tx3;
+							boxes[whichRegion]->y[(whichPoint+1)%4] = ty3;
 							q = boxes[whichRegion];
 							if( whichRegion == 0 )	// control selected - redo numbers for all the transformations
 							{
@@ -386,21 +459,35 @@ T* crunch( pts *p )
 	// redrawFractal = true;
 	return temp;
 }
-T* crunch2( pts *p, pts *q )	// TODO: can this have q default to boxes[0]? it didn't work last I tried it...
+T* crunch2( pts *p, pts *q )	// TODO: can this have q default to boxes[0]? It didn't work last I tried it...
 {
 	T *temp;
 	temp = new T;
 	temp->a = double(-p->x[1]*q->y[0]+p->x[2]*q->y[0]+p->x[0]*q->y[1]-p->x[2]*q->y[1]-p->x[0]*q->y[2]+p->x[1]*q->y[2])/double(-q->x[1]*q->y[0]+q->x[2]*q->y[0]+q->x[0]*q->y[1]-q->x[2]*q->y[1]-q->x[0]*q->y[2]+q->x[1]*q->y[2]);
 	temp->b = double(p->x[1]*q->x[0]-p->x[2]*q->x[0]-p->x[0]*q->x[1]+p->x[2]*q->x[1]+p->x[0]*q->x[2]-p->x[1]*q->x[2])/double(-q->x[1]*q->y[0]+q->x[2]*q->y[0]+q->x[0]*q->y[1]-q->x[2]*q->y[1]-q->x[0]*q->y[2]+q->x[1]*q->y[2]);
 	temp->e = double(-p->x[2]*q->x[1]*q->y[0]+p->x[1]*q->x[2]*q->y[0]+p->x[2]*q->x[0]*q->y[1]-p->x[0]*q->x[2]*q->y[1]-p->x[1]*q->x[0]*q->y[2]+p->x[0]*q->x[1]*q->y[2])/double(-q->x[1]*q->y[0]+q->x[2]*q->y[0]+q->x[0]*q->y[1]-q->x[2]*q->y[1]-q->x[0]*q->y[2]+q->x[1]*q->y[2]);
-	
+
 	temp->c = double(-p->y[1]*q->y[0]+p->y[2]*q->y[0]+p->y[0]*q->y[1]-p->y[2]*q->y[1]-p->y[0]*q->y[2]+p->y[1]*q->y[2])/double(-q->x[1]*q->y[0]+q->x[2]*q->y[0]+q->x[0]*q->y[1]-q->x[2]*q->y[1]-q->x[0]*q->y[2]+q->x[1]*q->y[2]);
 	temp->d = double(p->y[1]*q->x[0]-p->y[2]*q->x[0]-p->y[0]*q->x[1]+p->y[2]*q->x[1]+p->y[0]*q->x[2]-p->y[1]*q->x[2])/double(-q->x[1]*q->y[0]+q->x[2]*q->y[0]+q->x[0]*q->y[1]-q->x[2]*q->y[1]-q->x[0]*q->y[2]+q->x[1]*q->y[2]);
 	temp->f = double(-p->y[2]*q->x[1]*q->y[0]+p->y[1]*q->x[2]*q->y[0]+p->y[2]*q->x[0]*q->y[1]-p->y[0]*q->x[2]*q->y[1]-p->y[1]*q->x[0]*q->y[2]+p->y[0]*q->x[1]*q->y[2])/double(-q->x[1]*q->y[0]+q->x[2]*q->y[0]+q->x[0]*q->y[1]-q->x[2]*q->y[1]-q->x[0]*q->y[2]+q->x[1]*q->y[2]);
-	
+
 	// cout << temp->a << " " << temp->b << " " << temp->c << " "  << temp->d << " "  << temp->e << " "  << temp->f << endl;
 	// redrawFractal = true;
 	return temp;
+}
+void transformActive( int &x, int &y )
+{
+	int xb = x, yb = y;
+	x = activeT->a * double(xb) + activeT->b * double(yb) + activeT->e;	// transform mouse into transformation coordinates
+	y = activeT->c * double(xb) + activeT->d * double(yb) + activeT->f;
+}
+void invertActive( int &x, int &y )
+{
+	double xb = (double)x, yb = (double)y;
+	x = int(((activeT->d * xb - activeT->b * yb) - (activeT->d * activeT->e - activeT->b * activeT->f))
+		/ (activeT->a * activeT->d - activeT->b * activeT->c ));
+	y = int(((activeT->a * yb - activeT->c * xb) - (activeT->a * activeT->f - activeT->c * activeT->e))
+		/ (activeT->a * activeT->d - activeT->b * activeT->c ));
 }
 void deterministic( void )
 {
@@ -480,7 +567,7 @@ void drawRects( void )
 		polygonColor( controls, boxes[0]->x, boxes[0]->y, 4, 0xFF000077 );	// draw control rectangle in red
 		for( int i = 0; i < 4; i++ )	// control circles
 			circleColor( controls, boxes[0]->x[i], boxes[0]->y[i], 7, 0xFFFFFF77 - 0xFF00000 * 100*i );
-			
+
 		for( int i = 1; i < boxes.size(); i++ )
 		{
 			polygonColor( controls, boxes[i]->x, boxes[i]->y, 4, 0xFFFFFF77 );	// draw transformation rectangles
@@ -492,16 +579,20 @@ void drawRects( void )
 				if( whichRegion == 0 )
 				{
 					filledCircleColor( controls, boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F000070 );	// draw active circle (under pointer)
+						  circleColor( controls, boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F000070 );	// draw active circle (under pointer)
 					filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77000070 );	// draw secondary circle (also to be moved)
-					circleColor( controls,       boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F000070 );	// draw active circle (under pointer)
-					circleColor( controls,       boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77000070 );	// draw secondary circle (also to be moved)
+						  circleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77000070 );	// draw secondary circle (also to be moved)
+					filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0x77000070 );	// draw secondary circle (also to be moved)
+						  circleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0x77000070 );	// draw secondary circle (also to be moved)
 				}
 				else
 				{
 					filledCircleColor( controls, boxes[whichRegion]->x [whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F7F0070 );	// draw active circle (under pointer)
+						  circleColor( controls, boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F7F0070 );	// draw active circle (under pointer)
 					filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
-					circleColor(       controls, boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F7F0070 );	// draw active circle (under pointer)
-					circleColor(       controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
+						  circleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
+					filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
+						  circleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
 				}
 			}
 		}
@@ -526,19 +617,19 @@ void drawFractal( void )
 }
 int chaos( void )
 {
-	int x,y,xp,yp,r, colors[tfs.size()][3],j=0;
+	int x,y,xp,yp,r, colors[tfs.size()][3];//,j=0;
 	//tick = SDL_GetTicks() + 20;
-	// x = rand() % screen->w;	// pick random point on screen	
+	// x = rand() % screen->w;	// pick random point on screen
 	// y = rand() % screen->h;	//
 	x = y = 30;	// faster than the previous two - by how much?
-	
+
 	for( int i = 0; i < tfs.size(); i++ )
 	{
 		colors[i][0] = 0xFF * ( cos( 2.0*PI / (double)tfs.size() * i ) + 1.0 );
 		colors[i][1] = 0xFF * ( cos( 2.0*PI / (double)tfs.size() * ( i - 1.0 * (double)tfs.size() / 3 ) ) + 1 );
 		colors[i][1] = 0xFF * ( cos( 2.0*PI / (double)tfs.size() * ( i + 2.0 * (double)tfs.size() / 3 ) ) + 1 );
 	}
-	
+
 	for( int i = 0; i < 100; i++ )	// do some iterations to get close to the attractor (don't plot)
 	{
 		r = rand()%tfs.size();	// pick a random transformation
@@ -550,16 +641,16 @@ int chaos( void )
 	for( int i = 0; i < 10000; i++ )	// 25000 is a good ballpark
 	// while( tick > SDL_GetTicks() )
 	{
-		j++;
+		// j++;
 		r = rand()%tfs.size();
 		xp = x * tfs[r]->a + y * tfs[r]->b + tfs[r]->e;
 		yp = x * tfs[r]->c + y * tfs[r]->d + tfs[r]->f;
 		x = xp;
 		y = yp;
-		
+
 		pixelColor( fractal, x, y, 0x000000FF + colors[r][0]*0x1000000 + colors[r][1]*0x10000 + colors[r][2]*0x100);
 	}
-	cout << j << endl;
+	// cout << j << endl;
 	redrawFractal = false;
 	return 0;
 }
@@ -573,10 +664,10 @@ bool inRegion( int x, int y, int &r )
 	T *t;
 	pts *p, *q;
 	p = new pts;
-	p->x[0] = 0;	p->y[0] = 0;	// 
+	p->x[0] = 0;	p->y[0] = 0;	//
 	p->x[1] = 100;	p->y[1] = 0;	// target box is the 100-box - could be anything, this size may help with resolution
-	p->x[2] = 100;	p->y[2] = 100;	// 
-	p->x[3] = 0;	p->y[3] = 100;	// 
+	p->x[2] = 100;	p->y[2] = 100;	//
+	p->x[3] = 0;	p->y[3] = 100;	//
 
 	// for( int i = 1; i < boxes.size(); i++ )	// check each transformation box, excluding the control box
 	for( int i = boxes.size() - 1; i >= 0; i-- )
@@ -590,13 +681,19 @@ bool inRegion( int x, int y, int &r )
 			r = i;
 			return true;
 		}
+		// cout << t->a << " " << t->b << " " << t->c << " "  << t->d << " "  << t->e << " "  << t->f << endl;
+		// memcpy( activeT, t, sizeof( t ) );
+		// cout << activeT->a << " " << activeT->b << " " << activeT->c << " "  << activeT->d << " "  << activeT->e << " "  << activeT->f << endl;
 	}
 	return false;
 }
-bool nearPoint( double x, double y, int &r, int &p )
+bool nearPoint( double x, double y, int &r, int &pt )
 {
 	/* TODO: handle cases where mouse is near more than one point - take the closest one */
 	// for( int i = 1; i < boxes.size(); i++ )
+	pts *p;
+	
+
 	for( int i = boxes.size() - 1; i >= 0; i-- )
 	{
 		for( int j = 0; j < 4; j++ )
@@ -604,8 +701,14 @@ bool nearPoint( double x, double y, int &r, int &p )
 			if( dist2( x, y, double(boxes[i]->x[j]), double(boxes[i]->y[j]) ) < 50 ) // x,y within 7-pixel radius of that particular point
 			{
 				r = i;
-				p = j;
-				// cout << "Near region " << r << " and point " << p << endl;
+				pt = j;
+				
+				p = new pts;
+				p->x[(j+2)%4] = 0;		p->y[(j+2)%4] = 0;	//
+				p->x[(j+3)%4] = 100;	p->y[(j+3)%4] = 0;	// target box is the 100-box - could be anything, this size may help with resolution
+				p->x[(j+0)%4] = 100;	p->y[(j+0)%4] = 100;	//
+				p->x[(j+1)%4] = 0;		p->y[(j+1)%4] = 100;	//
+				activeT = crunch2( p, boxes[r] );
 				return true;
 			}
 		}
@@ -614,7 +717,6 @@ bool nearPoint( double x, double y, int &r, int &p )
 }
 bool activate( Sint16 x, Sint16 y )
 {
-	// cout << "activate\n";
 	int r, p;
 	if( nearPoint( double(x), double(y), r, p ) )
 	{
