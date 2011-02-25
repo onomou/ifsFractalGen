@@ -208,16 +208,12 @@ bool getclick( Sint16 &x, Sint16 &y )
 void makeTransforms( void )
 {
 	SDL_Event event;
-	bool done = false, dragging = false, down = false, activated = false, updateDrag = true;
-	double tx1, tx3, ty1, ty3, x0, y0, x1, x3, y1, y3, x, y;
-	double remousex, remousey, recornerx, recornery, re1x, re1y, re3x, re3y;
+	bool done = false, dragging = false, down = false, updateDrag = true;
+	double x0, y0, remousex, remousey, recornerx, recornery, re1x, re1y, re3x, re3y;
 	int hitx, hity;
-	T *rotateT;
-	pts *toRotate, *q;
-	double sinphi, cosphi, slope, slope0;
-	
-	double scale, theta, sintheta, costheta;
-	T *temp;
+	T *rotateT, *temp;
+	pts *q;
+	double scale, sinphi, cosphi;
 
 	/* Get rectangles */
 	for( int o = 0; !done; o++ )	// loop until done is set true, increment o each iteration
@@ -330,13 +326,13 @@ void makeTransforms( void )
 							}
 							remousex = event.button.x - x0;
 							remousey = event.button.y - y0;
-							
+
 							scale = sqrt(double(remousex  * remousex  + remousey  * remousey )
 								  / double(recornerx * recornerx + recornery * recornery));
-							
+
 							cosphi = cosangle( remousex, remousey, recornerx, recornery );	// get angle - only returns between 0 and PI
 							sinphi = sinangle( remousex, remousey, recornerx, recornery );
-							
+
 							rotateT->a = rotateT->d = cosphi*scale;
 							rotateT->b = -sinphi*scale;
 							rotateT->c = sinphi*scale;
@@ -346,8 +342,8 @@ void makeTransforms( void )
 							boxes[whichRegion]->x[(whichPoint+1)%4] = re3x * rotateT->a + re3y * rotateT->b + rotateT->e + x0;
 							boxes[whichRegion]->y[(whichPoint+1)%4] = re3x * rotateT->c + re3y * rotateT->d + rotateT->f + y0;
 							boxes[whichRegion]->x[whichPoint] = recornerx * rotateT->a + recornery * rotateT->b + rotateT->e + x0;//event.button.x;
-							boxes[whichRegion]->y[whichPoint] = recornerx * rotateT->c + recornery * rotateT->d + rotateT->f + y0;//event.button.y; 
-							
+							boxes[whichRegion]->y[whichPoint] = recornerx * rotateT->c + recornery * rotateT->d + rotateT->f + y0;//event.button.y;
+
 							q = boxes[whichRegion];
 							if( whichRegion == 0 )	// control selected - redo numbers for all the transformations
 							{
@@ -735,13 +731,12 @@ int chaos( void )
 	for( int i = 0; i < iter; i++ )	// 25000 is a good ballpark
 	// while( tick > SDL_GetTicks() )
 	{
-		// j++;
 		r = rand()%tfs.size();
 		xp = x * tfs[r]->a + y * tfs[r]->b + tfs[r]->e;
 		yp = x * tfs[r]->c + y * tfs[r]->d + tfs[r]->f;
 		x = xp;
 		y = yp;
-		
+
 		if( x > 0 && x < fractal->w && y > 0 && y < fractal->h )
 		{
 			pix = (getpix( fractal, x, y ) << 8) + 0xFF;
@@ -752,7 +747,7 @@ int chaos( void )
 			else
 				pixelColor( fractal, x, y, 0xFFFFFFFF );
 		}
-		
+
 		// pixelColor( fractal, x, y, 0x000000FF + colors[r][0]*0x1000000 + colors[r][1]*0x10000 + colors[r][2]*0x100);
 	}
 	redrawFractal = false;
@@ -879,7 +874,7 @@ bool nearControl( double x, double y )
 		midx[1] = double(q->x[1]+q->x[2])/2;	midy[1] = double(q->y[1]+q->y[2])/2;
 		midx[2] = double(q->x[2]+q->x[3])/2;	midy[2] = double(q->y[2]+q->y[3])/2;
 		midx[3] = double(q->x[3]+q->x[0])/2;	midy[3] = double(q->y[3]+q->y[0])/2;
-		
+
 		if( ptldist( x, y, q->x[0], q->y[0], q->x[1], q->y[1] ) < 9 && dist2( x, y, midx[0], midy[0] ) < dist2( midx[0], midy[0], q->x[0], q->y[0] ) )
 		{
 			if( sideActive && whichRegion == i && whichRegion == 0 )	// already on that side
