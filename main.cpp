@@ -35,6 +35,8 @@ int whichPoint,whichSide,whichRegion;
 T *activeT;	// transformation numbers for active region
 pts *box;
 int iter;	// number of iterations to plot
+double zoomFactor;
+int zoomMatrix[2][3];
 
 // Uint32 tick;
 
@@ -64,9 +66,10 @@ void invertActive( int &x, int &y );
 void transformActive( int &x, int &y );
 bool nearControl( double x, double y );
 
-void swap( Sint16 *x, Sint16 *y )
+template <typename elementType>
+void swap( elementType *x, elementType *y )
 {
-	Sint16 t = *x;
+	elementType t = *x;
 	*x = *y;
 	*y = t;
 }
@@ -74,6 +77,7 @@ void swap( Sint16 *x, Sint16 *y )
 
 void init( void )
 {
+
 	/* Initialize SDL */
 	if( SDL_Init( SDL_INIT_TIMER | SDL_INIT_VIDEO ) < 0 )
 	{
@@ -103,6 +107,9 @@ void init( void )
 	redrawFractal = newActive = controlMoved = false;
 	controlChanged = true;
 	whichRegion = whichPoint = 0;
+	zoomFactor = 1;
+	zoomMatrix[0][0] = zoomMatrix[1][1] = zoomFactor;
+	zoomMatrix[1][0] = zoomMatrix[0][1] = 0;
 	activeT = new T;
 	box = new pts;
 	box->x[0] = 0;		box->y[0] = 0;
@@ -467,7 +474,7 @@ void makeTransforms( void )
 				case SDL_MOUSEBUTTONUP:
 					if( dragging )
 					{
-						if( dist2( event.button.x, event.button.y, hitx, hity ) > 80 )	// mouse dragged and released
+						if( dist2( event.button.x, event.button.y, hitx, hity ) > 150 )	// mouse dragged and released
 							dragging = false;
 					}
 					break;
@@ -653,28 +660,28 @@ void drawRects( void )
 
 				for( int j = 0; j < 4; j++ )
 					circleColor( controls, boxes[i]->x[j], boxes[i]->y[j], 7, 0xFFFFFF77 - 0xFF00000 * 100*j);	// draw circles on rectangle corners
-				if( pointActive )
-				{
-					if( whichRegion == 0 )	// point in control box
-					{
-						filledCircleColor( controls, boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0xAF000077 );	// draw active circle (under pointer)
-							  circleColor( controls, boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0xAF000077 );	// draw active circle (under pointer)
-						filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0xA7000077 );	// draw secondary circle (also to be moved)
-							  circleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0xA7000077 );	// draw secondary circle (also to be moved)
-						filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0xA7000077 );	// draw secondary circle (also to be moved)
-							  circleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0xA7000077 );	// draw secondary circle (also to be moved)
-					}
-					else	// point in a transformation box
-					{
-						filledCircleColor( controls, boxes[whichRegion]->x [whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F7F0070 );	// draw active circle (under pointer)
-							  circleColor( controls, boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F7F0070 );	// draw active circle (under pointer)
-						filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
-							  circleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
-						filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
-							  circleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
-					}
-				}
 			}
+			if( pointActive )
+            {
+                if( whichRegion == 0 )	// point in control box
+                {
+                    filledCircleColor( controls, boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0xAF000077 );	// draw active circle (under pointer)
+                          circleColor( controls, boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0xAF000077 );	// draw active circle (under pointer)
+                    filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0xA7000077 );	// draw secondary circle (also to be moved)
+                          circleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0xA7000077 );	// draw secondary circle (also to be moved)
+                    filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0xA7000077 );	// draw secondary circle (also to be moved)
+                          circleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0xA7000077 );	// draw secondary circle (also to be moved)
+                }
+                else	// point in a transformation box
+                {
+                    filledCircleColor( controls, boxes[whichRegion]->x [whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F7F0070 );	// draw active circle (under pointer)
+                          circleColor( controls, boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F7F0070 );	// draw active circle (under pointer)
+                    filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
+                          circleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
+                    filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
+                          circleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
+                }
+            }
 			if( sideActive )
 			{
 				lineColor( controls, boxes[whichRegion]->x[whichSide], boxes[whichRegion]->y[whichSide], boxes[whichRegion]->x[(whichSide+1)%4], boxes[whichRegion]->y[(whichSide+1)%4], 0xF0F0F0FF );
@@ -709,9 +716,9 @@ int chaos( void )
 	int x,y,xp,yp,r, colors[tfs.size()][3];//,j=0;
 	Uint32 pix;
 	//tick = SDL_GetTicks() + 20;
-	// x = rand() % screen->w;	// pick random point on screen
-	// y = rand() % screen->h;	//
-	x = y = 30;	// faster than the previous two - by how much?
+	x = rand() % screen->w;	// pick random point on screen
+	y = rand() % screen->h;	//
+	//x = y = 30;	// faster than the previous two - by how much?
 
 	for( int i = 0; i < tfs.size(); i++ )	// silly color scheme for distributing the color palette
 	{
@@ -796,9 +803,7 @@ bool inRegion( int x, int y, int &r )
 bool nearPoint( double x, double y, int &r, int &pt )
 {
 	/* TODO: handle cases where mouse is near more than one point - take the closest one */
-	// for( int i = 1; i < boxes.size(); i++ )
 	pts *p;
-
 
 	for( int i = boxes.size() - 1; i >= 0; i-- )
 	{

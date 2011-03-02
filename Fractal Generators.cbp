@@ -40,12 +40,14 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add directory="SDL\include" />
+			<Add directory="gtk\include" />
 		</Compiler>
 		<Linker>
 			<Add library="SDL" />
 			<Add library="SDL_gfx" />
 			<Add library="mingw32" />
 			<Add directory="SDL\lib" />
+			<Add directory="gtk\lib" />
 		</Linker>
 		<Unit filename="main.cpp" />
 		<Extensions>
