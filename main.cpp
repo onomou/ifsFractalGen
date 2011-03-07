@@ -14,6 +14,11 @@ const double PI = 3.14159265358979323846;
 
 using namespace std;
 
+/* ZOOMING:
+To go from original coordinates to new viewport, do (x * zoomFactor + xshift, y * zoomFactor + yshift)
+To go from new viewport to original (stored) coordinates, do ( (x-xshift)/zoomFactor, (y-yshift)/zoomFactor )
+*/
+
 struct T
 {
 	double a, b, c, d, e, f;
@@ -35,8 +40,7 @@ int whichPoint,whichSide,whichRegion;
 T *activeT;	// transformation numbers for active region
 pts *box;
 int iter;	// number of iterations to plot
-double zoomFactor;
-int zoomMatrix[2][3];
+double zoomFactor, xshift, yshift;
 
 // Uint32 tick;
 
@@ -62,6 +66,8 @@ double cosangle( double x, double y, double x0, double y0 );
 T* crunch( pts *p );
 T* crunch2( pts *p, pts *q );
 T* crunch2( pts2 *p, pts2 *q );
+void recrunchAll( void );
+void recrunchActive( void );
 void invertActive( int &x, int &y );
 void transformActive( int &x, int &y );
 bool nearControl( double x, double y );
@@ -74,6 +80,26 @@ void swap( elementType *x, elementType *y )
 	*y = t;
 }
 
+template <typename elementType>
+elementType xtr( elementType t )
+{
+	return t * zoomFactor + xshift;
+}
+template <typename elementType>
+elementType ytr( elementType t )
+{
+	return t * zoomFactor + yshift;
+}
+template <typename elementType>
+elementType xinv( elementType t )
+{
+	return (t - xshift)/zoomFactor;
+}
+template <typename elementType>
+elementType yinv( elementType t )
+{
+	return (t - yshift)/zoomFactor;
+}
 
 void init( void )
 {
@@ -81,21 +107,21 @@ void init( void )
 	/* Initialize SDL */
 	if( SDL_Init( SDL_INIT_TIMER | SDL_INIT_VIDEO ) < 0 )
 	{
-        fprintf(stderr, "Unable to init SDL: %s\n", SDL_GetError());
-        exit(1);
+		fprintf(stderr, "Unable to init SDL: %s\n", SDL_GetError());
+		exit(1);
 	}
-    atexit(SDL_Quit);	// push SDL_Quit onto stack to be executed at program end
+	atexit(SDL_Quit);	// push SDL_Quit onto stack to be executed at program end
 
 	/* Initialize SDL windows */
 	SDL_putenv( "SDL_VIDEO_CENTERED=center" );	// center the video window
 	SDL_WM_SetCaption("IFS Fractal Generator", NULL); // sets the Window Title
 	const SDL_VideoInfo* myPointer = SDL_GetVideoInfo();	// get current display information (for height, width, color depth, etc.)
-	screen = SDL_SetVideoMode(  myPointer->current_w/1.5,  myPointer->current_h/1.5, 0, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_RESIZABLE);
+	screen = SDL_SetVideoMode( myPointer->current_w/1.5, myPointer->current_h/1.5, 0, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_RESIZABLE);
 
 	controls = SDL_ConvertSurface( screen, screen->format, screen->flags|SDL_SRCALPHA );	// add alpha channel to surface
 	SDL_SetColorKey( controls, SDL_SRCCOLORKEY, 0 );		// set alpha color to black - blits will copy only pixels not black
 
-	fractal  = SDL_ConvertSurface( screen, screen->format, screen->flags|SDL_SRCALPHA );
+	fractal = SDL_ConvertSurface( screen, screen->format, screen->flags|SDL_SRCALPHA );
 	SDL_SetColorKey( fractal, SDL_SRCCOLORKEY, 0 );
 
 	// SDL_EnableUNICODE(1);
@@ -108,8 +134,7 @@ void init( void )
 	controlChanged = true;
 	whichRegion = whichPoint = 0;
 	zoomFactor = 1;
-	zoomMatrix[0][0] = zoomMatrix[1][1] = zoomFactor;
-	zoomMatrix[1][0] = zoomMatrix[0][1] = 0;
+	xshift = yshift = 0;
 	activeT = new T;
 	box = new pts;
 	box->x[0] = 0;		box->y[0] = 0;
@@ -165,7 +190,7 @@ Uint32 getpix( SDL_Surface *surface, int x, int y )
 			return *( Uint32 * )p;
 
 		default:
-			return 0;       /* shouldn't happen, but avoids warnings */
+			return 0;	/* shouldn't happen, but avoids warnings */
 	}
 }
 int getred( SDL_Surface *surface, int x, int y )
@@ -216,8 +241,9 @@ void makeTransforms( void )
 {
 	SDL_Event event;
 	bool done = false, dragging = false, down = false, updateDrag = true;
+	Sint16 x,y,xa,ya;
 	double x0, y0, remousex, remousey, recornerx, recornery, re1x, re1y, re3x, re3y;
-	int hitx, hity;
+	int downx, downy;
 	T *rotateT, *temp;
 	pts *q;
 	double scale, sinphi, cosphi;
@@ -297,7 +323,7 @@ void makeTransforms( void )
 		temp = new T;
 		temp = crunch( q );
 		tfs.push_back( temp );
-		if( o > 2 )	// added more than two transformations
+		if( o > 1 )	// added more than one transformations
 			redrawFractal = true;
 		render();
 	}
@@ -314,31 +340,30 @@ void makeTransforms( void )
 				case SDL_MOUSEMOTION:
 					if( dragging )	// dragging a point, side, or box already
 					{
-						controlChanged = true;
-						redrawFractal = true;
-						/* TODO: unify these dragging activities - each re-crunches stuff separately... */
+						controlChanged = true;	// redraw the screen
+						redrawFractal = true;	// redraw the fractal
 						if( pointActive )
 						{
 							if( updateDrag )
 							{
 								x0 = boxes[whichRegion]->x[(whichPoint+2)%4];	// fixed corner
-								y0 = boxes[whichRegion]->y[(whichPoint+2)%4];
-								re1x = boxes[whichRegion]->x[(whichPoint+3)%4] - x0;
-								re1y = boxes[whichRegion]->y[(whichPoint+3)%4] - y0;
-								re3x = boxes[whichRegion]->x[(whichPoint+1)%4] - x0;
-								re3y = boxes[whichRegion]->y[(whichPoint+1)%4] - y0;
-								recornerx = boxes[whichRegion]->x[whichPoint] - x0;
-								recornery = boxes[whichRegion]->y[whichPoint] - y0;
+								y0 = boxes[whichRegion]->y[(whichPoint+2)%4];	//
+								re1x = boxes[whichRegion]->x[(whichPoint+3)%4] - x0;	// 
+								re1y = boxes[whichRegion]->y[(whichPoint+3)%4] - y0;	// 
+								re3x = boxes[whichRegion]->x[(whichPoint+1)%4] - x0;	// shift affected corners relative to the fixed corner
+								re3y = boxes[whichRegion]->y[(whichPoint+1)%4] - y0;	// 
+								recornerx = boxes[whichRegion]->x[whichPoint] - x0;		//
+								recornery = boxes[whichRegion]->y[whichPoint] - y0;		//
 								updateDrag = false;
 							}
-							remousex = event.button.x - x0;
-							remousey = event.button.y - y0;
+							remousex = xinv(event.button.x) - x0;	// shift mouse relative to fixed corner
+							remousey = yinv(event.button.y) - y0;	//
 
-							scale = sqrt(double(remousex  * remousex  + remousey  * remousey )
-								  / double(recornerx * recornerx + recornery * recornery));
+							scale = sqrt(double(remousex * remousex + remousey * remousey )
+								/ double(recornerx * recornerx + recornery * recornery));	// get scale from old transformation to new 
 
-							cosphi = cosangle( remousex, remousey, recornerx, recornery );	// get angle - only returns between 0 and PI
-							sinphi = sinangle( remousex, remousey, recornerx, recornery );
+							cosphi = cosangle( remousex, remousey, recornerx, recornery );	// get angle for rotation from original
+							sinphi = sinangle( remousex, remousey, recornerx, recornery );	//
 
 							rotateT->a = rotateT->d = cosphi*scale;
 							rotateT->b = -sinphi*scale;
@@ -350,102 +375,33 @@ void makeTransforms( void )
 							boxes[whichRegion]->y[(whichPoint+1)%4] = re3x * rotateT->c + re3y * rotateT->d + rotateT->f + y0;
 							boxes[whichRegion]->x[whichPoint] = recornerx * rotateT->a + recornery * rotateT->b + rotateT->e + x0;//event.button.x;
 							boxes[whichRegion]->y[whichPoint] = recornerx * rotateT->c + recornery * rotateT->d + rotateT->f + y0;//event.button.y;
-
-							q = boxes[whichRegion];
-							if( whichRegion == 0 )	// control selected - redo numbers for all the transformations
-							{
-								for( int i = 1; i < boxes.size(); i++ )
-								{
-									temp = crunch2( boxes[i], q );	// crunch transformation for box i
-									tfs[i]->a = temp->a;
-									tfs[i]->b = temp->b;
-									tfs[i]->c = temp->c;
-									tfs[i]->d = temp->d;
-									tfs[i]->e = temp->e;
-									tfs[i]->f = temp->f;
-								}
-							}
-							else	// redo numbers for the control changed
-							{
-								temp = crunch( q );
-								tfs[whichRegion]->a = temp->a;
-								tfs[whichRegion]->b = temp->b;
-								tfs[whichRegion]->c = temp->c;
-								tfs[whichRegion]->d = temp->d;
-								tfs[whichRegion]->e = temp->e;
-								tfs[whichRegion]->f = temp->f;
-							}
 						}
 						else if( sideActive )
 						{
-							boxes[whichRegion]->x[whichSide] += event.motion.xrel;
-							boxes[whichRegion]->y[whichSide] += event.motion.yrel;
-							boxes[whichRegion]->x[(whichSide+1)%4] += event.motion.xrel;
-							boxes[whichRegion]->y[(whichSide+1)%4] += event.motion.yrel;
-							q = boxes[whichRegion];
-							if( whichRegion == 0 )	// control selected - redo numbers for all the transformations
-							{
-								for( int i = 1; i < boxes.size(); i++ )
-								{
-									temp = crunch2( boxes[i], q );
-									tfs[i]->a = temp->a;
-									tfs[i]->b = temp->b;
-									tfs[i]->c = temp->c;
-									tfs[i]->d = temp->d;
-									tfs[i]->e = temp->e;
-									tfs[i]->f = temp->f;
-								}
-							}
-							else
-							{
-								temp = crunch( q );
-								tfs[whichRegion]->a = temp->a;
-								tfs[whichRegion]->b = temp->b;
-								tfs[whichRegion]->c = temp->c;
-								tfs[whichRegion]->d = temp->d;
-								tfs[whichRegion]->e = temp->e;
-								tfs[whichRegion]->f = temp->f;
-							}
+							boxes[whichRegion]->x[whichSide] += (event.motion.xrel/zoomFactor);
+							boxes[whichRegion]->y[whichSide] += (event.motion.yrel/zoomFactor);
+							boxes[whichRegion]->x[(whichSide+1)%4] += (event.motion.xrel/zoomFactor);
+							boxes[whichRegion]->y[(whichSide+1)%4] += (event.motion.yrel/zoomFactor);
 						}
 						else if( regionActive )
 						{
 							for( int i = 0; i < 4; i++ )	// move all four points parallel relative to the mouse movement
 							{
-								boxes[whichRegion]->x[i] += event.motion.xrel;
-								boxes[whichRegion]->y[i] += event.motion.yrel;
-							}
-							q = boxes[whichRegion];
-							if( whichRegion == 0 )	// control selected - redo numbers for all the transformations
-							{
-								for( int i = 1; i < boxes.size(); i++ )
-								{
-									temp = crunch2( boxes[i], q );
-									tfs[i]->a = temp->a;
-									tfs[i]->b = temp->b;
-									tfs[i]->c = temp->c;
-									tfs[i]->d = temp->d;
-									tfs[i]->e = temp->e;
-									tfs[i]->f = temp->f;
-								}
-							}
-							else
-							{
-								temp = crunch( q );
-								tfs[whichRegion]->a = temp->a;
-								tfs[whichRegion]->b = temp->b;
-								tfs[whichRegion]->c = temp->c;
-								tfs[whichRegion]->d = temp->d;
-								tfs[whichRegion]->e = temp->e;
-								tfs[whichRegion]->f = temp->f;
+								boxes[whichRegion]->x[i] += (event.motion.xrel/zoomFactor);
+								boxes[whichRegion]->y[i] += (event.motion.yrel/zoomFactor);
 							}
 						}
+						if( whichRegion == 0 )	// control selected - redo numbers for all the transformations
+							recrunchAll();
+						else	// 
+							recrunchActive();
 						render();
 					}
 					else
 					{
 						activate( event.button.x, event.button.y );
-						hitx = event.button.x;
-						hity = event.button.y;
+						downx = event.button.x;
+						downy = event.button.y;
 						if( controlChanged )
 							render();
 					}
@@ -455,7 +411,6 @@ void makeTransforms( void )
 					if( dragging )
 					{
 						dragging = false;
-						// chaos();
 					}
 					else if( pointActive )	// clicked on point
 					{
@@ -474,7 +429,7 @@ void makeTransforms( void )
 				case SDL_MOUSEBUTTONUP:
 					if( dragging )
 					{
-						if( dist2( event.button.x, event.button.y, hitx, hity ) > 150 )	// mouse dragged and released
+						if( dist2( event.button.x, event.button.y, downx, downy ) > 120 )	// mouse dragged and released
 							dragging = false;
 					}
 					break;
@@ -487,6 +442,60 @@ void makeTransforms( void )
 						drawFractal();
 						SDL_Flip( screen );
 						iter = 30000;	// reset fractal resolution for on-the-fly rendering
+					}
+					else if( event.key.keysym.sym == SDLK_RETURN )
+					{
+						getclick( x, y );
+						while( event.type != SDL_MOUSEBUTTONDOWN )
+						{
+							SDL_PollEvent( &event );
+							if( event.type == SDL_MOUSEMOTION )
+							{
+								SDL_FillRect( screen, NULL, 0 );
+								render(false);
+								rectangleColor( screen, x, y, event.button.x, event.button.y, 0xFFFFFFFF );
+								SDL_Flip( screen );
+							}
+						}
+						// x = xtr(x);
+						// y = ytr(y);
+						getclick( xa, ya );
+						// xa = xtr(xa);
+						// ya = ytr(ya);
+						if( xa == x || ya == y )
+							continue;
+							
+						if( double( abs( screen->h ) ) / double( ya - y ) < double(abs( screen->w )) / double( xa - x ) )
+							zoomFactor *= double( screen->h ) / double( abs( ya - y ) );
+						else
+							zoomFactor *= double( screen->w ) / double( abs( xa - x ) );
+							
+						if( x < xa )	// dragged box right
+							xshift = -xtr(xinv(0) - xinv(x));
+						else			// dragged box left
+							xshift = xinv(0) - xa * zoomFactor;
+						if( y < ya )	// dragged box down
+							yshift = -ytr(yinv(0) - yinv(y));
+						else			// dragged box up
+							yshift = yinv(0) - ya * zoomFactor;
+						// xshift = -abs(x - xa)/2*zoomFactor;
+						// yshift = -abs(y - ya)/2*zoomFactor;
+						controlChanged = redrawFractal = true;
+						render();
+						// cout << zoomFactor << " and " << 1 / zoomFactor << endl;
+						// while( event.type != SDL_MOUSEMOTION )
+							// SDL_PollEvent( &event );
+						// cout << event.button.x << endl << endl;
+						// rectangleColor( screen, event.button.x - (double(screen->w) * zoomFactor + event.button.x)/2, event.button.y - ( double(screen->h) * zoomFactor + event.button.y)/2, event.button.x + (double(screen->w) * zoomFactor + event.button.x)/2, event.button.y + ( double(screen->h) * zoomFactor + event.button.y)/2, 0xFFFFFFFF );
+						// rectangleColor( screen, 0, 0, 20, 20, 0xFFFFFFFF );
+						// rectangleColor( screen, 0, 0, screen->w + 29, screen->h + 20, 0xFFFFFFFF );
+						// SDL_Flip(screen);
+					}
+					else if( event.key.keysym.sym == SDLK_BACKSPACE )
+					{
+						zoomFactor -= 0.5;
+						controlChanged = redrawFractal = true;
+						render();
 					}
 					else
 					{
@@ -529,7 +538,7 @@ T* crunch( pts *p )
 	temp->d = (double(p->y[1])*double(boxes[0]->x[0])-double(p->y[2])*double(boxes[0]->x[0])-double(p->y[0])*double(boxes[0]->x[1])+double(p->y[2])*double(boxes[0]->x[1])+double(p->y[0])*double(boxes[0]->x[2])-double(p->y[1])*double(boxes[0]->x[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
 	temp->f = (-double(p->y[2])*double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(p->y[1])*double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(p->y[2])*double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(p->y[0])*double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(p->y[1])*double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(p->y[0])*double(boxes[0]->x[1])*double(boxes[0]->y[2]))/(-double(boxes[0]->x[1])*double(boxes[0]->y[0])+double(boxes[0]->x[2])*double(boxes[0]->y[0])+double(boxes[0]->x[0])*double(boxes[0]->y[1])-double(boxes[0]->x[2])*double(boxes[0]->y[1])-double(boxes[0]->x[0])*double(boxes[0]->y[2])+double(boxes[0]->x[1])*double(boxes[0]->y[2]));
 
-	// cout << temp->a << " " << temp->b << " " << temp->c << " "  << temp->d << " "  << temp->e << " "  << temp->f << endl;
+	// cout << temp->a << " " << temp->b << " " << temp->c << " " << temp->d << " " << temp->e << " " << temp->f << endl;
 	return temp;
 }
 T* crunch2( pts *p, pts *q )	// TODO: can this have q default to boxes[0]? It didn't work last I tried it...
@@ -560,6 +569,37 @@ T* crunch2( pts2 *p, pts2 *q )	// double precision cruncher
 
 	return temp;
 }
+void recrunchAll( void )
+{
+	T *temp;
+	pts *q;
+	// temp = new T;
+	q = boxes[whichRegion];
+	for( int i = 1; i < boxes.size(); i++ )
+	{
+		temp = crunch2( boxes[i], q );	// crunch transformation for box i
+		tfs[i]->a = temp->a;
+		tfs[i]->b = temp->b;
+		tfs[i]->c = temp->c;
+		tfs[i]->d = temp->d;
+		tfs[i]->e = temp->e;
+		tfs[i]->f = temp->f;
+	}
+}
+void recrunchActive( void )
+{
+	T *temp;
+	// temp = new T;
+	// q = boxes[whichRegion];
+	temp = crunch( boxes[whichRegion] );
+	tfs[whichRegion]->a = temp->a;
+	tfs[whichRegion]->b = temp->b;
+	tfs[whichRegion]->c = temp->c;
+	tfs[whichRegion]->d = temp->d;
+	tfs[whichRegion]->e = temp->e;
+	tfs[whichRegion]->f = temp->f;
+}
+/* Unused:
 void transformActive( int &x, int &y )
 {
 	int xb = x, yb = y;
@@ -574,6 +614,7 @@ void invertActive( int &x, int &y )
 	y = int(((activeT->a * yb - activeT->c * xb) - (activeT->a * activeT->f - activeT->c * activeT->e))
 		/ (activeT->a * activeT->d - activeT->b * activeT->c ));
 }
+*/
 void deterministic( void )
 {
 	SDL_Event event;
@@ -645,57 +686,104 @@ void render( bool flip )
 }
 void drawRects( void )
 {
+	// cout << "drawRects\n";
+	Sint16 poly[4], polx[4];
 	if( controlChanged )
 	{
 		SDL_FillRect( controls, NULL, 0 );
 		if( boxes.size() > 0 )	// make sure there is something to draw
 		{
-			polygonColor( controls, boxes[0]->x, boxes[0]->y, 4, 0xFF000077 );	// draw control rectangle in red
+			// cout << "controlChanged and size > 0\n";
+			for( int i = 0; i < 4; i++ )
+			{
+				polx[i] = xtr(boxes[0]->x[i]);// * zoomFactor + xshift;
+				poly[i] = ytr(boxes[0]->y[i]);// * zoomFactor + yshift;
+			}
+			polygonColor( controls, polx, poly, 4, 0xFF000077 );	// draw control rectangle in red
 			for( int i = 0; i < 4; i++ )	// control circles
-				circleColor( controls, boxes[0]->x[i], boxes[0]->y[i], 7, 0xFFFFFF77 - 0xFF00000 * 100*i );
+				circleColor( controls, polx[i], poly[i], 7, 0xFFFFFF77 - 0xFF00000 * 100*i );
+				// circleColor( controls, boxes[0]->x[i] * zoomFactor + xshift, boxes[0]->y[i] * zoomFactor + yshift, 7, 0xFFFFFF77 - 0xFF00000 * 100*i );
 
+			// cout << "Drew circles\n";
 			for( int i = 1; i < boxes.size(); i++ )
 			{
-				polygonColor( controls, boxes[i]->x, boxes[i]->y, 4, 0xFFFFFF77 );	// draw transformation rectangles
+				for( int j = 0; j < 4; j++ )	// transfer control points to structure for zooming
+				{
+					polx[j] = xtr(boxes[i]->x[j]);// * zoomFactor + xshift;
+					poly[j] = ytr(boxes[i]->y[j]);// * zoomFactor + yshift;
+				}
+				polygonColor( controls, polx, poly, 4, 0xFFFFFF77 );	// draw transformation rectangles
 
-				for( int j = 0; j < 4; j++ )
-					circleColor( controls, boxes[i]->x[j], boxes[i]->y[j], 7, 0xFFFFFF77 - 0xFF00000 * 100*j);	// draw circles on rectangle corners
+				for( int j = 0; j < 4; j++ )	// draw circles on rectangle corners
+					circleColor( controls, polx[j], poly[j], 7, 0xFFFFFF77 - 0xFF00000 * 100*j );
+					// circleColor( controls, boxes[i]->x[j] * zoomFactor + xshift, boxes[i]->y[j] * zoomFactor + yshift, 7, 0xFFFFFF77 - 0xFF00000 * 100*j);
 			}
 			if( pointActive )
-            {
-                if( whichRegion == 0 )	// point in control box
-                {
-                    filledCircleColor( controls, boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0xAF000077 );	// draw active circle (under pointer)
-                          circleColor( controls, boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0xAF000077 );	// draw active circle (under pointer)
-                    filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0xA7000077 );	// draw secondary circle (also to be moved)
-                          circleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0xA7000077 );	// draw secondary circle (also to be moved)
-                    filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0xA7000077 );	// draw secondary circle (also to be moved)
-                          circleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0xA7000077 );	// draw secondary circle (also to be moved)
-                }
-                else	// point in a transformation box
-                {
-                    filledCircleColor( controls, boxes[whichRegion]->x [whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F7F0070 );	// draw active circle (under pointer)
-                          circleColor( controls, boxes[whichRegion]->x[ whichPoint],      boxes[whichRegion]->y[ whichPoint],      7, 0x7F7F0070 );	// draw active circle (under pointer)
-                    filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
-                          circleColor( controls, boxes[whichRegion]->x[(whichPoint+1)%4], boxes[whichRegion]->y[(whichPoint+1)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
-                    filledCircleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
-                          circleColor( controls, boxes[whichRegion]->x[(whichPoint+3)%4], boxes[whichRegion]->y[(whichPoint+3)%4], 7, 0x77770070 );	// draw secondary circle (also to be moved)
-                }
-            }
+			{
+				if( whichRegion == 0 )	// point in control box
+				{
+					// 2
+					filledCircleColor( controls, xtr(boxes[whichRegion]->x[ whichPoint     ]), ytr(boxes[whichRegion]->y[ whichPoint     ]), 7, 0xAF000077 );	// draw active circle (under pointer)
+					      circleColor( controls, xtr(boxes[whichRegion]->x[ whichPoint     ]), ytr(boxes[whichRegion]->y[ whichPoint     ]), 7, 0xAF000077 );	// draw active circle (under pointer)
+					// 3
+					filledCircleColor( controls, xtr(boxes[whichRegion]->x[(whichPoint+1)%4]), ytr(boxes[whichRegion]->y[(whichPoint+1)%4]), 7, 0xA7000077 );	// draw secondary circle (also to be moved)
+					      circleColor( controls, xtr(boxes[whichRegion]->x[(whichPoint+1)%4]), ytr(boxes[whichRegion]->y[(whichPoint+1)%4]), 7, 0xA7000077 );	// draw secondary circle (also to be moved)
+					// 1
+					filledCircleColor( controls, xtr(boxes[whichRegion]->x[(whichPoint+3)%4]), ytr(boxes[whichRegion]->y[(whichPoint+3)%4]), 7, 0xA7000077 );	// draw secondary circle (also to be moved)
+					      circleColor( controls, xtr(boxes[whichRegion]->x[(whichPoint+3)%4]), ytr(boxes[whichRegion]->y[(whichPoint+3)%4]), 7, 0xA7000077 );	// draw secondary circle (also to be moved)
+				}
+				else	// point in a transformation box
+				{
+					// 2
+					filledCircleColor( controls, xtr(boxes[whichRegion]->x[ whichPoint     ]), ytr(boxes[whichRegion]->y[ whichPoint     ]), 7, 0x7F7F0070 );	// draw active circle (under pointer)
+						  circleColor( controls, xtr(boxes[whichRegion]->x[ whichPoint     ]), ytr(boxes[whichRegion]->y[ whichPoint     ]), 7, 0x7F7F0070 );	// draw active circle (under pointer)
+					// 3
+					filledCircleColor( controls, xtr(boxes[whichRegion]->x[(whichPoint+1)%4]), ytr(boxes[whichRegion]->y[(whichPoint+1)%4]), 7, 0x77770070 );	// draw secondary circle (also to be moved)
+						  circleColor( controls, xtr(boxes[whichRegion]->x[(whichPoint+1)%4]), ytr(boxes[whichRegion]->y[(whichPoint+1)%4]), 7, 0x77770070 );	// draw secondary circle (also to be moved)
+					// 1
+					filledCircleColor( controls, xtr(boxes[whichRegion]->x[(whichPoint+3)%4]), ytr(boxes[whichRegion]->y[(whichPoint+3)%4]), 7, 0x77770070 );	// draw secondary circle (also to be moved)
+						  circleColor( controls, xtr(boxes[whichRegion]->x[(whichPoint+3)%4]), ytr(boxes[whichRegion]->y[(whichPoint+3)%4]), 7, 0x77770070 );	// draw secondary circle (also to be moved)
+				}
+			}
 			if( sideActive )
 			{
-				lineColor( controls, boxes[whichRegion]->x[whichSide], boxes[whichRegion]->y[whichSide], boxes[whichRegion]->x[(whichSide+1)%4], boxes[whichRegion]->y[(whichSide+1)%4], 0xF0F0F0FF );
-				lineColor( controls, boxes[whichRegion]->x[whichSide]+1, boxes[whichRegion]->y[whichSide]+1, boxes[whichRegion]->x[(whichSide+1)%4]+1, boxes[whichRegion]->y[(whichSide+1)%4]+1, 0xF0F0F0FF );
-				lineColor( controls, boxes[whichRegion]->x[whichSide]+1, boxes[whichRegion]->y[whichSide]-1, boxes[whichRegion]->x[(whichSide+1)%4]+1, boxes[whichRegion]->y[(whichSide+1)%4]-1, 0xF0F0F0FF );
-				lineColor( controls, boxes[whichRegion]->x[whichSide]-1, boxes[whichRegion]->y[whichSide]+1, boxes[whichRegion]->x[(whichSide+1)%4]-1, boxes[whichRegion]->y[(whichSide+1)%4]+1, 0xF0F0F0FF );
-				lineColor( controls, boxes[whichRegion]->x[whichSide]-1, boxes[whichRegion]->y[whichSide]-1, boxes[whichRegion]->x[(whichSide+1)%4]-1, boxes[whichRegion]->y[(whichSide+1)%4]-1, 0xF0F0F0FF );
+				polx[0] = xtr(boxes[whichRegion]->x[ whichSide     ]);// * zoomFactor + xshift;
+				polx[1] = xtr(boxes[whichRegion]->x[(whichSide+1)%4]);// * zoomFactor + xshift;
+				polx[2] = xtr(boxes[whichRegion]->x[(whichSide+1)%4]);// * zoomFactor + xshift;
+				polx[3] = xtr(boxes[whichRegion]->x[ whichSide     ]);// * zoomFactor + xshift;
+				poly[0] = ytr(boxes[whichRegion]->y[ whichSide     ])+1;// * zoomFactor + yshift+1;
+				poly[1] = ytr(boxes[whichRegion]->y[(whichSide+1)%4])+1;// * zoomFactor + yshift+1;
+				poly[2] = ytr(boxes[whichRegion]->y[(whichSide+1)%4])-1;// * zoomFactor + yshift-1;
+				poly[3] = ytr(boxes[whichRegion]->y[ whichSide	   ])-1;// * zoomFactor + yshift-1;
+				filledPolygonColor( controls, polx, poly, 4, 0xF0F0F0FF );
+				polx[0] += 1;
+				polx[1] += 1;
+				polx[2] -= 1;
+				polx[3] -= 1;
+				poly[0] -= 1;
+				poly[1] -= 1;
+				poly[2] += 1;
+				poly[3] += 1;
+				filledPolygonColor( controls, polx, poly, 4, 0xF0F0F0FF );
+				// filledCircleColor( controls, polx[0] - 1, poly[0], 1, 0xF0F0F0FF );
+				// filledCircleColor( controls, polx[1] - 1, poly[1], 1, 0xF0F0F0FF );
+				// lineColor( controls, boxes[whichRegion]->x[whichSide]	* zoomFactor + xshift, boxes[whichRegion]->y[whichSide]	* zoomFactor + yshift, boxes[whichRegion]->x[(whichSide+1)%4]	* zoomFactor + xshift, boxes[whichRegion]->y[(whichSide+1)%4]	* zoomFactor + yshift, 0xF0F0F0FF );
+				// lineColor( controls, (boxes[whichRegion]->x[whichSide]+1) * zoomFactor + xshift, (boxes[whichRegion]->y[whichSide]+1) * zoomFactor + yshift, (boxes[whichRegion]->x[(whichSide+1)%4]+1) * zoomFactor + xshift, (boxes[whichRegion]->y[(whichSide+1)%4]+1) * zoomFactor + yshift, 0xF0F0F0FF );
+				// lineColor( controls, (boxes[whichRegion]->x[whichSide]+1) * zoomFactor + xshift, (boxes[whichRegion]->y[whichSide]-1) * zoomFactor + yshift, (boxes[whichRegion]->x[(whichSide+1)%4]+1) * zoomFactor + xshift, (boxes[whichRegion]->y[(whichSide+1)%4]-1) * zoomFactor + yshift, 0xF0F0F0FF );
+				// lineColor( controls, (boxes[whichRegion]->x[whichSide]-1) * zoomFactor + xshift, (boxes[whichRegion]->y[whichSide]+1) * zoomFactor + yshift, (boxes[whichRegion]->x[(whichSide+1)%4]-1) * zoomFactor + xshift, (boxes[whichRegion]->y[(whichSide+1)%4]+1) * zoomFactor + yshift, 0xF0F0F0FF );
+				// lineColor( controls, (boxes[whichRegion]->x[whichSide]-1) * zoomFactor + xshift, (boxes[whichRegion]->y[whichSide]-1) * zoomFactor + yshift, (boxes[whichRegion]->x[(whichSide+1)%4]-1) * zoomFactor + xshift, (boxes[whichRegion]->y[(whichSide+1)%4]-1) * zoomFactor + yshift, 0xF0F0F0FF );
 			}
 			if( regionActive )	// highlight region
 			{
+				for( int j = 0; j < 4; j++ )
+				{
+					polx[j] = xtr(boxes[whichRegion]->x[j]);// * zoomFactor + xshift;
+					poly[j] = ytr(boxes[whichRegion]->y[j]);// * zoomFactor + yshift;
+				}
 				if( whichRegion == 0 )
-					filledPolygonColor( controls, boxes[whichRegion]->x, boxes[whichRegion]->y, 4, 0x7F000070 );
+					filledPolygonColor( controls, polx, poly, 4, 0x7F000070 );
 				else
-					filledPolygonColor( controls, boxes[whichRegion]->x, boxes[whichRegion]->y, 4, 0x7F7F0070 );
+					filledPolygonColor( controls, polx, poly, 4, 0x7F7F0070 );
 			}
 		}
 		controlChanged = false;
@@ -713,19 +801,20 @@ void drawFractal( void )
 }
 int chaos( void )
 {
-	int x,y,xp,yp,r, colors[tfs.size()][3];//,j=0;
-	Uint32 pix;
+	double x,y,xp,yp,r;//, colors[tfs.size()][3];//,j=0;
+	int xplot, yplot;
+	// Uint32 pix;
 	//tick = SDL_GetTicks() + 20;
 	x = rand() % screen->w;	// pick random point on screen
 	y = rand() % screen->h;	//
-	//x = y = 30;	// faster than the previous two - by how much?
+	//x = y = 30;	// faster than above - by how much?
 
-	for( int i = 0; i < tfs.size(); i++ )	// silly color scheme for distributing the color palette
-	{
-		colors[i][0] = 0xFF * ( cos( 2.0*PI / (double)tfs.size() * i ) + 1.0 );
-		colors[i][1] = 0xFF * ( cos( 2.0*PI / (double)tfs.size() * ( i - 1.0 * (double)tfs.size() / 3 ) ) + 1 );
-		colors[i][1] = 0xFF * ( cos( 2.0*PI / (double)tfs.size() * ( i + 2.0 * (double)tfs.size() / 3 ) ) + 1 );
-	}
+	// for( int i = 0; i < tfs.size(); i++ )	// silly color scheme for distributing the color palette
+	// {
+		// colors[i][0] = 0xFF * ( cos( 2.0*PI / (double)tfs.size() * i ) + 1.0 );
+		// colors[i][1] = 0xFF * ( cos( 2.0*PI / (double)tfs.size() * ( i - 1.0 * (double)tfs.size() / 3 ) ) + 1 );
+		// colors[i][1] = 0xFF * ( cos( 2.0*PI / (double)tfs.size() * ( i + 2.0 * (double)tfs.size() / 3 ) ) + 1 );
+	// }
 
 	for( int i = 0; i < 100; i++ )	// do some iterations to get close to the attractor (don't plot)
 	{
@@ -744,15 +833,17 @@ int chaos( void )
 		x = xp;
 		y = yp;
 
-		if( x > 0 && x < fractal->w && y > 0 && y < fractal->h )
+		xplot = xtr(x);// * zoomFactor + xshift;
+		yplot = ytr(y);// * zoomFactor + yshift;
+		if( xplot > 0 && xplot < fractal->w && yplot > 0 && yplot < fractal->h )
 		{
-			pix = (getpix( fractal, x, y ) << 8) + 0xFF;
-			if( pix > 0xFF )	// white pixel?
-			{
-				pixelColor( fractal, x, y, pix - 0x100000 );
-			}
-			else
-				pixelColor( fractal, x, y, 0xFFFFFFFF );
+			// pix = (getpix( fractal, x, y ) << 8) + 0xFF;
+			// if( pix > 0xFF )	// white pixel?
+			// {
+				// pixelColor( fractal, x * zoomFactor + xshift, y * zoomFactor + yshift, pix - 0x100000 );
+			// }
+			// else
+				pixelColor( fractal, xplot, yplot, 0xFFFFFFFF );
 		}
 
 		// pixelColor( fractal, x, y, 0x000000FF + colors[r][0]*0x1000000 + colors[r][1]*0x10000 + colors[r][2]*0x100);
@@ -895,7 +986,7 @@ bool nearControl( double x, double y )
 			regionActive = false;
 			return true;
 		}
-		if( ptldist( x, y, q->x[1], q->y[1], q->x[2], q->y[2] ) < 9  && dist2( x, y, midx[1], midy[1] ) < dist2( midx[1], midy[1], q->x[1], q->y[1] ))
+		if( ptldist( x, y, q->x[1], q->y[1], q->x[2], q->y[2] ) < 9 && dist2( x, y, midx[1], midy[1] ) < dist2( midx[1], midy[1], q->x[1], q->y[1] ))
 		{
 			if( sideActive && whichRegion == i && whichRegion == 1 )	// already on that side
 			{
@@ -910,7 +1001,7 @@ bool nearControl( double x, double y )
 			regionActive = false;
 			return true;
 		}
-		if( ptldist( x, y, q->x[2], q->y[2], q->x[3], q->y[3] ) < 9  && dist2( x, y, midx[2], midy[2] ) < dist2( midx[2], midy[2], q->x[2], q->y[2] ))
+		if( ptldist( x, y, q->x[2], q->y[2], q->x[3], q->y[3] ) < 9 && dist2( x, y, midx[2], midy[2] ) < dist2( midx[2], midy[2], q->x[2], q->y[2] ))
 		{
 			if( sideActive && whichRegion == i && whichRegion == 2 )	// already on that side
 			{
@@ -925,7 +1016,7 @@ bool nearControl( double x, double y )
 			regionActive = false;
 			return true;
 		}
-		if( ptldist( x, y, q->x[3], q->y[3], q->x[0], q->y[0] ) < 9  && dist2( x, y, midx[3], midy[3] ) < dist2( midx[3], midy[3], q->x[3], q->y[3] ))
+		if( ptldist( x, y, q->x[3], q->y[3], q->x[0], q->y[0] ) < 9 && dist2( x, y, midx[3], midy[3] ) < dist2( midx[3], midy[3], q->x[3], q->y[3] ))
 		{
 			if( sideActive && whichRegion == i && whichRegion == 3 )	// already on that side
 			{
@@ -973,5 +1064,5 @@ bool nearControl( double x, double y )
 }
 bool activate( Sint16 x, Sint16 y )
 {
-	return nearControl( (double)x, (double)y );
+	return nearControl( ((double)x - xshift)/ zoomFactor, ((double)y - yshift)/zoomFactor );
 }

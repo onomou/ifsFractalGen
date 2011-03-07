@@ -12,14 +12,15 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add directory="SDL\bin" />
 				</Compiler>
 				<Linker>
-					<Add library="mingw32" />
 					<Add library="SDLmain" />
 					<Add library="SDL" />
 					<Add library="SDL_gfx" />
+					<Add library="mingw32" />
 					<Add directory="SDL\lib" />
 				</Linker>
 			</Target>
@@ -33,6 +34,10 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="SDLmain" />
+					<Add library="SDL" />
+					<Add library="SDL_gfx" />
+					<Add library="mingw32" />
 					<Add directory="SDL\lib" />
 				</Linker>
 			</Target>
@@ -43,6 +48,7 @@
 			<Add directory="gtk\include" />
 		</Compiler>
 		<Linker>
+			<Add library="SDLmain" />
 			<Add library="SDL" />
 			<Add library="SDL_gfx" />
 			<Add library="mingw32" />
