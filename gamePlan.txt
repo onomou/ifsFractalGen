@@ -31,12 +31,12 @@ n times
 Take n=1 as original space
 Solve a*x + b*y + e = x' and c*x + d*y + f = y' for a,b,c,d,e,f given n=1 points and n=k>1 points:
 (x1 | y1 | 1 | p1
- x2 | y2 | 1 | q2
- x3 | y3 | 1 | r3)
+ x2 | y2 | 1 | p2
+ x3 | y3 | 1 | p3)
 	becomes
-(1 | 0 | 0 | (-q2 y1+r3 y1+p1 y2-r3 y2-p1 y3+q2 y3)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3)
- 0 | 1 | 0 | (q2 x1-r3 x1-p1 x2+r3 x2+p1 x3-q2 x3)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3)
- 0 | 0 | 1 | (-r3 x2 y1+q2 x3 y1+r3 x1 y2-p1 x3 y2-q2 x1 y3+p1 x2 y3)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3))
+(1 | 0 | 0 | (-p2 y1+p3 y1+p1 y2-p3 y2-p1 y3+p2 y3)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3)
+ 0 | 1 | 0 | (p2 x1-p3 x1-p1 x2+p3 x2+p1 x3-p2 x3)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3)
+ 0 | 0 | 1 | (-p3 x2 y1+p2 x3 y1+p3 x1 y2-p1 x3 y2-p2 x1 y3+p1 x2 y3)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3))
  and the same with xpi replaced by ypi
 http://www.wolframalpha.com/input/?i=row+reduce+{{x1%2Cy1%2C1%2Cp1}%2C{x2%2Cy2%2C1%2Cq2}%2C{x3%2Cy3%2C1%2Cr3}}
 
