@@ -1,0 +1,55 @@
+#!/bin/sh
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+exec_prefix_set=no
+
+usage="\
+Usage: aedgui-config [--prefix[=DIR]] [--exec-prefix[=DIR]] [--version] [--cflags] [--libs]"
+
+if test $# -eq 0; then
+      echo "${usage}" 1>&2
+      exit 1
+fi
+
+while test $# -gt 0; do
+  case "$1" in
+  -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+  *) optarg= ;;
+  esac
+
+  case $1 in
+    --prefix=*)
+      prefix=$optarg
+      if test $exec_prefix_set = no ; then
+        exec_prefix=$optarg
+      fi
+      ;;
+    --prefix)
+      echo $prefix
+      ;;
+    --exec-prefix=*)
+      exec_prefix=$optarg
+      exec_prefix_set=yes
+      ;;
+    --exec-prefix)
+      echo $exec_prefix
+      ;;
+    --version)
+      echo @AEDGUI_VERSION@
+      ;;
+    --cflags)
+	  includedirs="`@SDL_CONFIG@ --cflags`"
+      echo  $includedirs -I@includedir@/aedGUI
+      ;;
+    --libs)
+      libdirs="@SDL_LIBS@"
+      echo  -L@libdir@ -laedGUI $libdirs
+      ;;
+    *)
+      echo "${usage}" 1>&2
+      exit 1
+      ;;
+  esac
+  shift
+done

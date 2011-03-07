@@ -5,6 +5,8 @@
 	<cmath>
 	<iostream>
 
+1271438316 
+
 1255796849 c:\users\steven\my dropbox\class\seminar\fractal generators\sdl\include\sdl\sdl.h
 	"SDL_main.h"
 	"SDL_stdinc.h"
@@ -23,6 +25,8 @@
 	"SDL_version.h"
 	"begin_code.h"
 	"close_code.h"
+
+1298332677 e.h"
 
 1255796850 c:\users\steven\my dropbox\class\seminar\fractal generators\sdl\include\sdl\sdl_main.h
 	"SDL_stdinc.h"
@@ -167,6 +171,8 @@
 1255796850 c:\users\steven\my dropbox\class\seminar\fractal generators\sdl\include\sdl\sdl_quit.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
+
+1068144485 .h"
 
 1255796850 c:\users\steven\my dropbox\class\seminar\fractal generators\sdl\include\sdl\sdl_loadso.h
 	"SDL_stdinc.h"
@@ -385,6 +391,8 @@
 1297818443 c:\users\steven\dropbox\class\seminar\fractal generators\header.h
 	<SDL/SDL.h>
 
+1271438314 >
+
 1298225338 source:c:\users\steven\dropbox\class\seminar\fractal generators - restructured\main.cpp
 	<SDL/SDL.h>
 	<SDL/SDL_gfxPrimitives.h>
@@ -582,9 +590,10 @@
 1297818443 c:\users\steven\dropbox\class\seminar\fractal generators - restructured\header.h
 	<SDL/SDL.h>
 
-1298330861 source:c:\users\steven\code\ifsfractalgen\main.cpp
+1299175334 source:c:\users\steven\code\ifsfractalgen\main.cpp
 	<SDL/SDL.h>
 	<SDL/SDL_gfxPrimitives.h>
+	<SDL/SDL_thread.h>
 	<cmath>
 	<vector>
 	<iostream>
@@ -592,7 +601,7 @@
 	<algorithm>
 	"header.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl.h
 	"SDL_main.h"
 	"SDL_stdinc.h"
 	"SDL_audio.h"
@@ -611,14 +620,14 @@
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_main.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_main.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_stdinc.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_stdinc.h
 	"SDL_config.h"
 	<sys/types.h>
 	<stdio.h>
@@ -644,17 +653,17 @@
 	<stdlib.h>
 	"close_code.h"
 
-1255796864 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_config.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_config.h
 	"SDL_platform.h"
 	<stdarg.h>
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_platform.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_platform.h
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\begin_code.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\begin_code.h
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\close_code.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\close_code.h
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_audio.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_audio.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_endian.h"
@@ -664,23 +673,23 @@
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_error.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_error.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_endian.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_endian.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_mutex.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_mutex.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_thread.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_thread.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_mutex.h"
@@ -688,24 +697,24 @@
 	<process.h>
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_rwops.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_rwops.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_cdrom.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_cdrom.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_cpuinfo.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_cpuinfo.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_events.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_events.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_active.h"
@@ -716,66 +725,1638 @@
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_active.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_active.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_keyboard.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_keyboard.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_keysym.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_keysym.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_keysym.h
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_mouse.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_mouse.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_video.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_video.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_rwops.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796849 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_joystick.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_joystick.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_quit.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_quit.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_loadso.h
-	"SDL_stdinc.h"
-	"SDL_error.h"
-	"begin_code.h"
-	"close_code.h"
-
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_timer.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_loadso.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1255796850 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_version.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_version.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1253753047 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_gfxprimitives.h
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl\sdl_gfxprimitives.h
 	<math.h>
 	"SDL.h"
 
-1297818443 c:\users\steven\code\ifsfractalgen\header.h
+1298332678 c:\users\steven\code\ifsfractalgen\header.h
+	<SDL/SDL.h>
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedgui.h
+	"dllmacros.h"
+	"aedTimer.h"
+	"aedWidget.h"
+	"aedWindow.h"
+	"aedStaticText.h"
+	"aedButton.h"
+	"aedTextBox.h"
+	"aedProgressBar.h"
+	"aedFont.h"
+	"aedApp.h"
+	"aedFrame.h"
+	"aedCheckBox.h"
+	"aedStaticImage.h"
+	"aedImage.h"
+	"aedImageBank.h"
+	"aedSlider.h"
+	"aedScrollBar.h"
+	"aedRadioButtonGroup.h"
+	"aedSignal.h"
+	"aedListBox.h"
+	"aedSpinner.h"
+	"aedCursor.h"
+	"aedLog.h"
+	"aedXmlFile.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\dllmacros.h
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedtimer.h
+	"aedObject.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedobject.h
+	<vector>
+	<map>
+	<string>
+	<algorithm>
+	<math.h>
+	<typeinfo>
+	"SDL.h"
+	"dllmacros.h"
+	"aedSignal.h"
+
+1298332677 c:\users\steven\code\ifsfractalgen\sdl\include\sdl.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_audio.h"
+	"SDL_cdrom.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_loadso.h"
+	"SDL_mutex.h"
+	"SDL_rwops.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_video.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedsignal.h
+	<iostream>
+	<vector>
+	"dllmacros.h"
+	"SDL.h"
+	"aedCallBack.h"
+
+1068144485 ck.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedcallback.h
+	"dllmacros.h"
+	"aedFunctorNoArgs.h"
+	"aedFunctor1Arg.h"
+
+1068144485 r1Arg.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedfunctornoargs.h
+	"aedFunctorBase.h"
+
+1068144485 rBase.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedfunctorbase.h
+	<iostream>
+	"dllmacros.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedfunctor1arg.h
+	"aedFunctorBase.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedwidget.h
+	"aedObject.h"
+	"aedRect.h"
+	"aedColor.h"
+	"aedFont.h"
+	"aedTheme.h"
+	"aedApp.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedrect.h
+	<iostream>
+	"dllmacros.h"
+	"SDL.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedcolor.h
+	"dllmacros.h"
+	<iostream>
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedfont.h
+	"dllmacros.h"
+	"SDL.h"
+	"aedColor.h"
+
+1068144485 h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedtheme.h
+	<string>
+	"dllmacros.h"
+	"drawlibs.h"
+	"aedColor.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\drawlibs.h
+	"SDL.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedapp.h
+	<iostream>
+	<vector>
+	<string>
+	"dllmacros.h"
+	"aedFont.h"
+	"aedWidget.h"
+	"aedLog.h"
+	"aedTheme.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedlog.h
+	<iostream>
+	<ostream>
+	<fstream>
+	<vector>
+	"dllmacros.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedwindow.h
+	"dllmacros.h"
+	"aedWidget.h"
+	"aedStaticText.h"
+	"aedButton.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedstatictext.h
+	"aedWidget.h"
+	"aedFont.h"
+
+1068144485 "
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedbutton.h
+	"dllmacros.h"
+	"aedWidget.h"
+	"aedImage.h"
+	"aedStaticText.h"
+
+1068144485 Text.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedimage.h
+	"dllmacros.h"
+	"SDL.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedtextbox.h
+	"aedStaticText.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedprogressbar.h
+	"aedWidget.h"
+	"aedStaticText.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedframe.h
+	"dllmacros.h"
+	"aedWidget.h"
+	"aedFont.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedcheckbox.h
+	"dllmacros.h"
+	"aedWidget.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedstaticimage.h
+	"aedWidget.h"
+	"aedImage.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedimagebank.h
+	<iostream>
+	<vector>
+	"SDL.h"
+	"dllmacros.h"
+	"aedImage.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedslider.h
+	"aedWidget.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedscrollbar.h
+	"aedSlider.h"
+	"aedButton.h"
+	"aedSignal.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedradiobuttongroup.h
+	"dllmacros.h"
+	"aedWidget.h"
+	"aedCheckBox.h"
+
+1068144485 ox.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedlistbox.h
+	"aedWidget.h"
+	"aedFont.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedspinner.h
+	"aedWidget.h"
+	"aedTextBox.h"
+	"aedButton.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedcursor.h
+	"SDL.h"
+	"dllmacros.h"
+
+1068144485 c:\users\steven\code\ifsfractalgen\aedgui\include\aedxmlfile.h
+	"dllmacros.h"
+	"aedRect.h"
+	<string>
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan.hpp
+	<guichan/actionevent.hpp>
+	<guichan/actionlistener.hpp>
+	<guichan/graphics.hpp>
+	<guichan/color.hpp>
+	<guichan/deathlistener.hpp>
+	<guichan/event.hpp>
+	<guichan/exception.hpp>
+	<guichan/focushandler.hpp>
+	<guichan/font.hpp>
+	<guichan/gui.hpp>
+	<guichan/image.hpp>
+	<guichan/imagefont.hpp>
+	<guichan/imageloader.hpp>
+	<guichan/input.hpp>
+	<guichan/inputevent.hpp>
+	<guichan/key.hpp>
+	<guichan/keyevent.hpp>
+	<guichan/keyinput.hpp>
+	<guichan/keylistener.hpp>
+	<guichan/listmodel.hpp>
+	<guichan/mouseevent.hpp>
+	<guichan/mouseinput.hpp>
+	<guichan/mouselistener.hpp>
+	<guichan/rectangle.hpp>
+	<guichan/cliprectangle.hpp>
+	<guichan/widget.hpp>
+	<guichan/widgets/button.hpp>
+	<guichan/widgets/checkbox.hpp>
+	<guichan/widgets/container.hpp>
+	<guichan/widgets/dropdown.hpp>
+	<guichan/widgets/icon.hpp>
+	<guichan/widgets/label.hpp>
+	<guichan/widgets/listbox.hpp>
+	<guichan/widgets/scrollarea.hpp>
+	<guichan/widgets/slider.hpp>
+	<guichan/widgets/radiobutton.hpp>
+	<guichan/widgets/textbox.hpp>
+	<guichan/widgets/textfield.hpp>
+	<guichan/widgets/window.hpp>
+	"guichan/platform.hpp"
+
+1168749500 latform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\actionevent.hpp
+	"guichan/event.hpp"
+	"guichan/platform.hpp"
+	<string>
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\event.hpp
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\platform.hpp
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\actionlistener.hpp
+	<string>
+	"guichan/actionevent.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\cliprectangle.hpp
+	"guichan/rectangle.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\rectangle.hpp
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\color.hpp
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\deathlistener.hpp
+	<string>
+	"guichan/event.hpp"
+	"guichan/platform.hpp"
+
+1168751032 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\exception.hpp
+	<string>
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\focushandler.hpp
+	<vector>
+	"guichan/platform.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\focuslistener.hpp
+	<string>
+	"guichan/event.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\font.hpp
+	<string>
+	"guichan/platform.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\genericinput.hpp
+	<queue>
+	"guichan/input.hpp"
+	"guichan/keyinput.hpp"
+	"guichan/mouseinput.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\input.hpp
+	"guichan/platform.hpp"
+
+1168749500 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\keyinput.hpp
+	"guichan/key.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\key.hpp
+	"guichan/platform.hpp"
+
+1168749500 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\mouseinput.hpp
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\graphics.hpp
+	<iosfwd>
+	<stack>
+	"guichan/cliprectangle.hpp"
+	"guichan/platform.hpp"
+
+1168749500 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\gui.hpp
+	<list>
+	"guichan/keyevent.hpp"
+	"guichan/mouseevent.hpp"
+	"guichan/mouseinput.hpp"
+	"guichan/platform.hpp"
+
+1168749500 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\keyevent.hpp
+	"guichan/inputevent.hpp"
+	"guichan/key.hpp"
+	"guichan/platform.hpp"
+
+1167774430 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\inputevent.hpp
+	"guichan/event.hpp"
+	"guichan/platform.hpp"
+
+1168749500 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\mouseevent.hpp
+	"guichan/inputevent.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\image.hpp
+	<string>
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\imagefont.hpp
+	<string>
+	"guichan/font.hpp"
+	"guichan/platform.hpp"
+	"guichan/rectangle.hpp"
+
+1169606580 ectangle.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\imageloader.hpp
+	<iosfwd>
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\keylistener.hpp
+	"guichan/keyevent.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\listmodel.hpp
+	<string>
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\mouselistener.hpp
+	"guichan/mouseevent.hpp"
+	"guichan/platform.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\selectionevent.hpp
+	"guichan/event.hpp"
+	"guichan/platform.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\selectionlistener.hpp
+	<string>
+	"guichan/selectionevent.hpp"
+	"guichan/platform.hpp"
+
+1169606580 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widget.hpp
+	<list>
+	<string>
+	"guichan/color.hpp"
+	"guichan/rectangle.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgetlistener.hpp
+	<string>
+	"guichan/event.hpp"
+	"guichan/platform.hpp"
+
+1168749500 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\button.hpp
+	<string>
+	"guichan/keylistener.hpp"
+	"guichan/mouseevent.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1167774432 idget.hpp"
+
+1167774432 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\checkbox.hpp
+	<string>
+	"guichan/keylistener.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1167720930 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\container.hpp
+	<list>
+	"guichan/basiccontainer.hpp"
+	"guichan/graphics.hpp"
+	"guichan/platform.hpp"
+
+1169606578 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\basiccontainer.hpp
+	<list>
+	"guichan/deathlistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1167774432 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\dropdown.hpp
+	"guichan/actionlistener.hpp"
+	"guichan/basiccontainer.hpp"
+	"guichan/deathlistener.hpp"
+	"guichan/focushandler.hpp"
+	"guichan/keylistener.hpp"
+	"guichan/listmodel.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widgets/listbox.hpp"
+	"guichan/widgets/scrollarea.hpp"
+
+1167774432 idgets/scrollarea.hpp"
+
+1167774432 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\listbox.hpp
+	"guichan/keylistener.hpp"
+	"guichan/listmodel.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1167720930 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\scrollarea.hpp
+	<string>
+	"guichan/basiccontainer.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+
+1167720930 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\icon.hpp
+	"guichan/image.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\imagebutton.hpp
+	"guichan/platform.hpp"
+	"guichan/widgets/button.hpp"
+
+1252006502 idgets/button.hpp"
+
+1167720930 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\label.hpp
+	<string>
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1167720930 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\slider.hpp
+	"guichan/keylistener.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1167774432 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\radiobutton.hpp
+	<map>
+	<string>
+	"guichan/keylistener.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\tab.hpp
+	<map>
+	<string>
+	"guichan/basiccontainer.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+
+1252006502 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\tabbedarea.hpp
+	<map>
+	<string>
+	<vector>
+	"guichan/actionlistener.hpp"
+	"guichan/basiccontainer.hpp"
+	"guichan/keylistener.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+
+1167774432 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\textbox.hpp
+	<ctime>
+	<string>
+	<vector>
+	"guichan/keylistener.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+
+1167774432 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\textfield.hpp
+	"guichan/keylistener.hpp"
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widget.hpp"
+	<string>
+
+1167720930 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\widgets\window.hpp
+	<string>
+	"guichan/mouselistener.hpp"
+	"guichan/platform.hpp"
+	"guichan/widgets/container.hpp"
+
+1167720930 idgets/container.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\sdl.hpp
+	<guichan/sdl/sdlgraphics.hpp>
+	<guichan/sdl/sdlimage.hpp>
+	<guichan/sdl/sdlimageloader.hpp>
+	<guichan/sdl/sdlinput.hpp>
+	"platform.hpp"
+
+1167720928 hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\sdl\sdlgraphics.hpp
+	"SDL.h"
+	"guichan/color.hpp"
+	"guichan/graphics.hpp"
+	"guichan/platform.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\sdl\sdlimage.hpp
+	"SDL.h"
+	<string>
+	"guichan/color.hpp"
+	"guichan/platform.hpp"
+	"guichan/image.hpp"
+
+1167720928 mage.hpp"
+
+1167720928 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\sdl\sdlimageloader.hpp
+	"guichan/imageloader.hpp"
+	"guichan/platform.hpp"
+	"SDL.h"
+
+1168749500 c:\users\steven\code\ifsfractalgen\guichan\include\guichan\sdl\sdlinput.hpp
+	<queue>
+	"SDL.h"
+	"guichan/input.hpp"
+	"guichan/keyinput.hpp"
+	"guichan/mouseinput.hpp"
+	"guichan/platform.hpp"
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core.h
+	<agar/core/core_begin.h>
+	<agar/core/core_init.h>
+	<agar/core/error.h>
+	<agar/core/string_compat.h>
+	<agar/core/snprintf.h>
+	<agar/core/vsnprintf.h>
+	<agar/core/vasprintf.h>
+	<agar/core/data_source.h>
+	<agar/core/load_den.h>
+	<agar/core/load_integral.h>
+	<agar/core/load_real.h>
+	<agar/core/load_string.h>
+	<agar/core/load_version.h>
+	<agar/core/version.h>
+	<agar/core/object.h>
+	<agar/core/list.h>
+	<agar/core/tree.h>
+	<agar/core/tbl.h>
+	<agar/core/config.h>
+	<agar/core/rcs.h>
+	<agar/core/file.h>
+	<agar/core/dir.h>
+	<agar/core/dso.h>
+	<agar/core/time.h>
+	<agar/core/db.h>
+	<agar/core/dbobject.h>
+	<agar/core/getopt.h>
+	<agar/core/core_close.h>
+
+1271438314 /core_close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\core_begin.h
+	<agar/config/ag_debug.h>
+	<agar/config/ag_lockdebug.h>
+	<agar/config/ag_legacy.h>
+	<agar/config/ag_threads.h>
+	<agar/core/threads.h>
+	<agar/config/_mk_have_stdlib_h.h>
+	<stdlib.h>
+	<agar/config/_mk_have_unistd_h.h>
+	<unistd.h>
+	<string.h>
+	<stdio.h>
+	<agar/core/limits.h>
+	<agar/core/queue.h>
+	<agar/core/cpuinfo.h>
+	<agar/config/_mk_big_endian.h>
+	<agar/config/_mk_little_endian.h>
+
+1271438316 ig/_mk_little_endian.h>
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\ag_debug.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\ag_lockdebug.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\ag_legacy.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\ag_threads.h
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\threads.h
+	<agar/config/have_pthreads.h>
+	<pthread.h>
+	<signal.h>
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 /close.h>
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_pthreads.h
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\begin.h
+	<agar/core/types.h>
+	<agar/core/attributes.h>
+	<agar/config/enable_nls.h>
+	<libintl.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\types.h
+	<agar/config/have_cygwin.h>
+	<basetyps.h>
+	<agar/config/_mk_have_sys_types_h.h>
+	<sys/types.h>
+	<agar/config/have_64bit.h>
+	<agar/config/have_long_double.h>
+
+1271438316 ig/have_long_double.h>
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_cygwin.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\_mk_have_sys_types_h.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_64bit.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_long_double.h
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\attributes.h
+	<agar/config/have_aligned_attribute.h>
+	<agar/config/have_bounded_attribute.h>
+	<agar/config/have_const_attribute.h>
+	<agar/config/have_deprecated_attribute.h>
+	<agar/config/have_format_attribute.h>
+	<agar/config/have_nonnull_attribute.h>
+	<agar/config/have_noreturn_attribute.h>
+	<agar/config/have_packed_attribute.h>
+	<agar/config/have_pure_attribute.h>
+	<agar/config/have_warn_unused_result_attribute.h>
+
+1271438316 ig/have_warn_unused_result_attribute.h>
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_aligned_attribute.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_bounded_attribute.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_const_attribute.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_deprecated_attribute.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_format_attribute.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_nonnull_attribute.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_noreturn_attribute.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_packed_attribute.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_pure_attribute.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_warn_unused_result_attribute.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\enable_nls.h
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\close.h
+	<agar/core/close_types.h>
+	<agar/core/close_attributes.h>
+
+1271438314 /close_attributes.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\close_types.h
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\close_attributes.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\_mk_have_stdlib_h.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\_mk_have_unistd_h.h
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\limits.h
+	<agar/config/_mk_have_limits_h.h>
+	<agar/config/_mk_have_float_h.h>
+	<agar/config/have_long_long.h>
+	<agar/config/have_long_double.h>
+	<limits.h>
+	<float.h>
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\_mk_have_limits_h.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\_mk_have_float_h.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_long_long.h
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\queue.h
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\cpuinfo.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\_mk_big_endian.h
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\_mk_little_endian.h
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\core_init.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\error.h
+	<agar/config/free_null_is_a_noop.h>
+	<agar/config/_mk_have_stdlib_h.h>
+	<stdlib.h>
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\free_null_is_a_noop.h
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\string_compat.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\snprintf.h
+	<agar/config/_mk_have_sys_types_h.h>
+	<sys/types.h>
+	<agar/config/have_snprintf.h>
+	<stdio.h>
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_snprintf.h
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\vsnprintf.h
+	<agar/config/_mk_have_sys_types_h.h>
+	<agar/config/have_vsnprintf.h>
+	<sys/types.h>
+	<stdarg.h>
+	<stdio.h>
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_vsnprintf.h
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\vasprintf.h
+	<stdarg.h>
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\data_source.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\load_den.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\load_integral.h
+	<agar/core/byteswap.h>
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\byteswap.h
+	<agar/config/have_64bit.h>
+	<agar/config/have_long_double.h>
+	<agar/config/_mk_big_endian.h>
+	<agar/config/_mk_little_endian.h>
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\load_real.h
+	<agar/config/have_long_double.h>
+	<agar/core/byteswap.h>
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\load_string.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\load_version.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\version.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\object.h
+	<agar/core/timeout.h>
+	<agar/core/class.h>
+	<agar/core/begin.h>
+	<agar/core/close.h>
+	<agar/core/variable.h>
+	<agar/core/event.h>
+	<agar/core/prop.h>
+
+1271438316 /prop.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\timeout.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\class.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\variable.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\event.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\prop.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\list.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\tree.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\tbl.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\config.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\rcs.h
+	<agar/config/ag_network.h>
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\ag_network.h
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\file.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\dir.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\dso.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\time.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\db.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\dbobject.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\getopt.h
+	<agar/core/begin.h>
+	<agar/core/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\core\core_close.h
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui.h
+	<agar/core/core_begin.h>
+	<agar/gui/gui.h>
+	<agar/gui/icons.h>
+	<agar/gui/primitive.h>
+	<agar/gui/box.h>
+	<agar/gui/button.h>
+	<agar/gui/checkbox.h>
+	<agar/gui/combo.h>
+	<agar/gui/console.h>
+	<agar/gui/editable.h>
+	<agar/gui/file_dlg.h>
+	<agar/gui/file_selector.h>
+	<agar/gui/fixed.h>
+	<agar/gui/font_selector.h>
+	<agar/gui/fspinbutton.h>
+	<agar/gui/fixed_plotter.h>
+	<agar/gui/glview.h>
+	<agar/gui/graph.h>
+	<agar/gui/hbox.h>
+	<agar/gui/hsvpal.h>
+	<agar/gui/icon.h>
+	<agar/gui/keymap.h>
+	<agar/gui/label.h>
+	<agar/gui/menu.h>
+	<agar/gui/mfspinbutton.h>
+	<agar/gui/mpane.h>
+	<agar/gui/mspinbutton.h>
+	<agar/gui/notebook.h>
+	<agar/gui/numerical.h>
+	<agar/gui/objsel.h>
+	<agar/gui/pane.h>
+	<agar/gui/pixmap.h>
+	<agar/gui/progress_bar.h>
+	<agar/gui/radio.h>
+	<agar/gui/scrollbar.h>
+	<agar/gui/scrollview.h>
+	<agar/gui/separator.h>
+	<agar/gui/socket.h>
+	<agar/gui/spinbutton.h>
+	<agar/gui/slider.h>
+	<agar/gui/statusbar.h>
+	<agar/gui/table.h>
+	<agar/gui/treetbl.h>
+	<agar/gui/text.h>
+	<agar/gui/textbox.h>
+	<agar/gui/text_cache.h>
+	<agar/gui/tlist.h>
+	<agar/gui/toolbar.h>
+	<agar/gui/ucombo.h>
+	<agar/gui/units.h>
+	<agar/gui/vbox.h>
+	<agar/gui/load_surface.h>
+	<agar/gui/load_color.h>
+	<agar/core/core_close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\gui.h
+	<agar/config/have_sdl.h>
+	<agar/gui/widget.h>
+	<agar/gui/window.h>
+	<agar/gui/text.h>
+	<agar/gui/iconmgr.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 close.h>
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_sdl.h
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\widget.h
+	<agar/config/have_sdl.h>
+	<agar/config/have_opengl.h>
+	<agar/gui/geometry.h>
+	<agar/gui/colors.h>
+	<agar/gui/surface.h>
+	<agar/gui/style.h>
+	<agar/gui/mouse.h>
+	<agar/gui/keyboard.h>
+	<agar/gui/drv.h>
+	<agar/gui/begin.h>
+	<agar/gui/widget_legacy.h>
+	<agar/gui/close.h>
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\have_opengl.h
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\geometry.h
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\begin.h
+	<agar/core/types.h>
+	<agar/core/attributes.h>
+	<agar/config/enable_nls.h>
+	<libintl.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\close.h
+	<agar/core/close_types.h>
+	<agar/core/close_attributes.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\colors.h
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\surface.h
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\style.h
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\mouse.h
+	<agar/gui/input_device.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\input_device.h
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\keyboard.h
+	<agar/gui/input_device.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\drv.h
+	<agar/gui/begin.h>
+	<agar/gui/drv_mw.h>
+	<agar/gui/drv_sw.h>
+	<agar/gui/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\drv_mw.h
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\drv_sw.h
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\widget_legacy.h
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\window.h
+	<agar/gui/widget.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\text.h
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\iconmgr.h
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\icons.h
+	<agar/gui/iconmgr.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\primitive.h
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\box.h
+	<agar/gui/widget.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\button.h
+	<agar/gui/widget.h>
+	<agar/gui/label.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\label.h
+	<agar/gui/widget.h>
+	<agar/gui/text.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\checkbox.h
+	<agar/gui/widget.h>
+	<agar/gui/label.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\combo.h
+	<agar/gui/widget.h>
+	<agar/gui/textbox.h>
+	<agar/gui/button.h>
+	<agar/gui/window.h>
+	<agar/gui/tlist.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\textbox.h
+	<agar/gui/widget.h>
+	<agar/gui/editable.h>
+	<agar/gui/label.h>
+	<agar/gui/scrollbar.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\editable.h
+	<agar/gui/widget.h>
+	<agar/gui/text.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\scrollbar.h
+	<agar/gui/widget.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\tlist.h
+	<agar/gui/scrollbar.h>
+	<agar/gui/menu.h>
+	<agar/gui/label.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\menu.h
+	<agar/gui/widget.h>
+	<agar/gui/window.h>
+	<agar/gui/toolbar.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\toolbar.h
+	<agar/gui/widget.h>
+	<agar/gui/box.h>
+	<agar/gui/button.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\console.h
+	<agar/gui/widget.h>
+	<agar/gui/scrollbar.h>
+	<agar/gui/text.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\file_dlg.h
+	<agar/gui/widget.h>
+	<agar/gui/textbox.h>
+	<agar/gui/button.h>
+	<agar/gui/window.h>
+	<agar/gui/tlist.h>
+	<agar/gui/combo.h>
+	<agar/gui/pane.h>
+	<agar/gui/label.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\pane.h
+	<agar/gui/widget.h>
+	<agar/gui/box.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\file_selector.h
+	<agar/gui/widget.h>
+	<agar/gui/textbox.h>
+	<agar/gui/button.h>
+	<agar/gui/window.h>
+	<agar/gui/file_dlg.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\fixed.h
+	<agar/gui/widget.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\font_selector.h
+	<agar/gui/pane.h>
+	<agar/gui/box.h>
+	<agar/gui/tlist.h>
+	<agar/gui/numerical.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\numerical.h
+	<agar/gui/widget.h>
+	<agar/gui/textbox.h>
+	<agar/gui/button.h>
+	<agar/gui/ucombo.h>
+	<agar/gui/units.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\ucombo.h
+	<agar/gui/widget.h>
+	<agar/gui/button.h>
+	<agar/gui/window.h>
+	<agar/gui/tlist.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\units.h
+	<agar/config/historical_units.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438322 c:\users\steven\code\ifsfractalgen\agar\include\agar\config\historical_units.h
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\fspinbutton.h
+	<agar/gui/widget.h>
+	<agar/gui/textbox.h>
+	<agar/gui/button.h>
+	<agar/gui/ucombo.h>
+	<agar/gui/units.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\fixed_plotter.h
+	<agar/gui/widget.h>
+	<agar/gui/label.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\glview.h
+	<agar/gui/widget.h>
+	<agar/config/have_opengl.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\graph.h
+	<agar/gui/widget.h>
+	<agar/gui/scrollbar.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\hbox.h
+	<agar/gui/box.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\hsvpal.h
+	<agar/gui/scrollbar.h>
+	<agar/gui/menu.h>
+	<agar/gui/window.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\icon.h
+	<agar/gui/widget.h>
+	<agar/gui/text.h>
+	<agar/gui/label.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\keymap.h
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\mfspinbutton.h
+	<agar/gui/widget.h>
+	<agar/gui/textbox.h>
+	<agar/gui/button.h>
+	<agar/gui/ucombo.h>
+	<agar/gui/units.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\mpane.h
+	<agar/gui/widget.h>
+	<agar/gui/box.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\mspinbutton.h
+	<agar/gui/widget.h>
+	<agar/gui/textbox.h>
+	<agar/gui/button.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\notebook.h
+	<agar/gui/widget.h>
+	<agar/gui/box.h>
+	<agar/gui/text.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\objsel.h
+	<agar/gui/widget.h>
+	<agar/gui/combo.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\pixmap.h
+	<agar/gui/widget.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\progress_bar.h
+	<agar/gui/widget.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\radio.h
+	<agar/gui/widget.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\scrollview.h
+	<agar/gui/widget.h>
+	<agar/gui/scrollbar.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\separator.h
+	<agar/gui/widget.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\socket.h
+	<agar/gui/widget.h>
+	<agar/gui/text.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\spinbutton.h
+	<agar/gui/widget.h>
+	<agar/gui/textbox.h>
+	<agar/gui/button.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\slider.h
+	<agar/gui/widget.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\statusbar.h
+	<agar/gui/widget.h>
+	<agar/gui/box.h>
+	<agar/gui/label.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\table.h
+	<agar/gui/scrollbar.h>
+	<agar/gui/menu.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\treetbl.h
+	<agar/gui/label.h>
+	<agar/gui/scrollbar.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\text_cache.h
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\vbox.h
+	<agar/gui/box.h>
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438316 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\load_surface.h
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1271438314 c:\users\steven\code\ifsfractalgen\agar\include\agar\gui\load_color.h
+	<agar/gui/begin.h>
+	<agar/gui/close.h>
+
+1298863448 source:/media/seven/Users/steven/code/ifsFractalGen/main.cpp
+	<SDL/SDL.h>
+	<SDL/SDL_gfxPrimitives.h>
+	<SDL/SDL_thread.h>
+	<cmath>
+	<vector>
+	<iostream>
+	<ctime>
+	<algorithm>
+	"header.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_audio.h"
+	"SDL_cdrom.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_loadso.h"
+	"SDL_mutex.h"
+	"SDL_rwops.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_video.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_main.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_stdinc.h
+	"SDL_config.h"
+	<sys/types.h>
+	<stdio.h>
+	<stdlib.h>
+	<stddef.h>
+	<stdarg.h>
+	<stdlib.h>
+	<malloc.h>
+	<stddef.h>
+	<stdarg.h>
+	<memory.h>
+	<string.h>
+	<strings.h>
+	<inttypes.h>
+	<stdint.h>
+	<ctype.h>
+	<iconv.h>
+	"begin_code.h"
+	<alloca.h>
+	<malloc.h>
+	<malloc.h>
+	<malloc.h>
+	<stdlib.h>
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_config.h
+	"SDL_platform.h"
+	<stdarg.h>
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_platform.h
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/begin_code.h
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/close_code.h
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_audio.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_endian.h"
+	"SDL_mutex.h"
+	"SDL_thread.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_error.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_endian.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_mutex.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_thread.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_mutex.h"
+	"begin_code.h"
+	<process.h>
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_rwops.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_cdrom.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_cpuinfo.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_events.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_active.h"
+	"SDL_keyboard.h"
+	"SDL_mouse.h"
+	"SDL_joystick.h"
+	"SDL_quit.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_active.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_keyboard.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_keysym.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_keysym.h
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_mouse.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_video.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_joystick.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_quit.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_loadso.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_version.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1298332677 /media/seven/Users/steven/code/ifsFractalGen/SDL/include/SDL/SDL_gfxPrimitives.h
+	<math.h>
+	"SDL.h"
+
+1298332678 /media/seven/Users/steven/code/ifsFractalGen/header.h
 	<SDL/SDL.h>
 
