@@ -29,7 +29,7 @@ struct pts2	// precision pts
 	double x[4],y[4];
 };
 
-SDL_Surface *screen, *controls, *fractal;
+SDL_Surface *screen, *controls, *fractal, *image;
 bool pointActive, sideActive, regionActive,redrawFractal, newActive, controlMoved, controlChanged;
 int whichPoint,whichSide,whichRegion;
 T *activeT;	// transformation numbers for active region
@@ -118,6 +118,9 @@ void init( void )
 
 	fractal = SDL_ConvertSurface( screen, screen->format, screen->flags|SDL_SRCALPHA );
 	SDL_SetColorKey( fractal, SDL_SRCCOLORKEY, 0 );
+	
+	image = SDL_LoadBMP("sierp.bmp");
+	SDL_SetColorKey( image, SDL_SRCCOLORKEY, 0 );		// set alpha color to black - blits will copy only pixels not black
 
 	// SDL_EnableUNICODE(1);
 	// SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
@@ -306,6 +309,7 @@ void makeTransforms( void )
 							lineColor( screen, q->x[1], q->y[1], q->x[1] + event.button.x - q->x[0], q->y[1] + event.button.y - q->y[0], 0xF0FFFFFF );	// 1-3
 							lineColor( screen, event.button.x, event.button.y, q->x[1] + event.button.x - q->x[0], q->y[1] + event.button.y - q->y[0], 0xFFFFFFFF );	// 2-3
 						}
+						SDL_BlitSurface( image, NULL, screen, NULL );
 						SDL_Flip( screen );
 						break;
 					default:
