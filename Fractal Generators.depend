@@ -590,7 +590,7 @@
 1297818443 c:\users\steven\dropbox\class\seminar\fractal generators - restructured\header.h
 	<SDL/SDL.h>
 
-1299175334 source:c:\users\steven\code\ifsfractalgen\main.cpp
+1299544691 source:c:\users\steven\code\ifsfractalgen\main.cpp
 	<SDL/SDL.h>
 	<SDL/SDL_gfxPrimitives.h>
 	<SDL/SDL_thread.h>
