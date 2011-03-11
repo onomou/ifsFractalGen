@@ -55,7 +55,7 @@
 			<Add directory="SDL\lib" />
 			<Add directory="gtk\lib" />
 		</Linker>
-		<Unit filename="main.cpp" />
+		<Unit filename="Fractal.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

@@ -966,13 +966,13 @@ bool nearControl( double x, double y )
 				pointActive = true;
 				sideActive = false;
 				regionActive = false;
-				h = new pts;
-				h->x[(j+2)%4] = 0;		h->y[(j+2)%4] = 0;		//
-				h->x[(j+3)%4] = 100;	h->y[(j+3)%4] = 0;		// target box is the 100-box - could be anything, this size may helh with resolution
-				h->x[(j+0)%4] = 100;	h->y[(j+0)%4] = 100;	//
-				h->x[(j+1)%4] = 0;		h->y[(j+1)%4] = 100;	//
-				activeT = crunch2( h, boxes[i] );
-				delete h;
+				// h = new pts;
+				// h->x[(j+2)%4] = 0;		h->y[(j+2)%4] = 0;		//
+				// h->x[(j+3)%4] = 100;	h->y[(j+3)%4] = 0;		// target box is the 100-box - could be anything, this size may helh with resolution
+				// h->x[(j+0)%4] = 100;	h->y[(j+0)%4] = 100;	//
+				// h->x[(j+1)%4] = 0;		h->y[(j+1)%4] = 100;	//
+				// activeT = crunch2( h, boxes[i] );
+				// delete h;
 				return true;
 			}
 		}

@@ -2360,3 +2360,21 @@
 1298332678 /media/seven/Users/steven/code/ifsFractalGen/header.h
 	<SDL/SDL.h>
 
+1299649223 source:c:\users\steven\code\ifsfractalgen\fractal.cpp
+	"Fractal.h"
+
+1299717310 c:\users\steven\code\ifsfractalgen\fractal.h
+	<SDL/SDL.h>
+	<SDL/SDL_gfxPrimitives.h>
+	<cmath>
+	<ctime>
+	<vector>
+	"niceFunctions.h"
+	"sdlFunctions.h"
+	<iostream>
+
+1299635163 c:\users\steven\code\ifsfractalgen\nicefunctions.h
+	<cmath>
+
+1299625871 c:\users\steven\code\ifsfractalgen\sdlfunctions.h
+
