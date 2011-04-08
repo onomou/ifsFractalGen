@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Fractal Generators" />
+		<Option title="Fractal Class" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
@@ -55,7 +55,12 @@
 			<Add directory="SDL\lib" />
 			<Add directory="gtk\lib" />
 		</Linker>
-		<Unit filename="main.cpp" />
+		<Unit filename="Fractal.cpp" />
+		<Unit filename="Fractal.h" />
+		<Unit filename="SDL.dll" />
+		<Unit filename="SDL_gfx.dll" />
+		<Unit filename="niceFunctions.h" />
+		<Unit filename="sdlFunctions.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

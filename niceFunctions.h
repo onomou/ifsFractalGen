@@ -26,3 +26,20 @@ void swap( elementType *x, elementType *y )
 	*x = *y;
 	*y = t;
 }
+double sinangle( double x, double y, double x0, double y0 )
+{
+	long double t, xn = x, yn = y, xn0 = x0, yn0 = y0;
+	t = y*xn0 - x*yn0;
+	t /= sqrt( xn*xn +yn*yn );
+	t /= sqrt(xn0*xn0+yn0*yn0);
+	return (double)t;
+}
+double cosangle( double x, double y, double x0, double y0 )
+{
+	long double t, xn = x, yn = y, xn0 = x0, yn0 = y0;
+	t = xn*xn0 + yn*yn0;
+	t /= sqrt( xn*xn +yn*yn );
+	t /= sqrt(xn0*xn0+yn0*yn0);
+	return (double)t;
+}
+

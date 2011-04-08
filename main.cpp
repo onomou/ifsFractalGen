@@ -261,8 +261,20 @@ void makeTransforms( void )
 				switch( event.type )
 				{
 					case SDL_KEYUP:
-						done = true;
-						i = 3;
+						if( event.key.keysym.sym == SDLK_SPACE )
+						{
+							redrawFractal = true;
+							iter = 3000000;	// increase fractal resolution temporarily
+							SDL_FillRect( screen, NULL, 0 );	// blank screen to get rid of boxes
+							drawFractal();
+							SDL_Flip( screen );
+							iter = 15000;	// reset fractal resolution for on-the-fly rendering
+						}
+						else
+						{
+							done = true;
+							i = 3;
+						}
 						break;
 					case SDL_MOUSEBUTTONDOWN:	// clicked new vertex
 						// getclick( q->x[i], q->y[i] );

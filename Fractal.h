@@ -17,7 +17,8 @@ class Fractal
 		SDL_Surface *screen, *fractal, *controls;
 
 		unsigned int iter;
-		bool controlChanged;
+		Uint32 tick;	// is this the same as unsigned int?
+		bool controlChanged, redrawfractal;
 		double viewleft,viewright,viewbottom,viewtop;
 
 		struct
@@ -31,12 +32,12 @@ class Fractal
 
 		struct corners
 		{ Sint16 x[4],y[4]; };	// TODO: should this be double for better precision?
-		corners *unitbox;
+		corners *unitbox, *box;
 		std::vector<corners*> boxes;	// index of corners for each box
 		struct T
 		{ double a, b, c, d, e, f; };
 		std::vector<T*> tfs;		// transformation values a...f
-		T *activeT;	// transformation numbers for active region
+		T *activeT, *Ttmp;	// transformation numbers for active region
 
 		T* crunch( corners*, corners* );
 
@@ -46,7 +47,7 @@ class Fractal
 		template <typename elementType>
 		double ytr( elementType t )
 		{ return double((screen->h - 1) * (t - viewbottom)) / (viewtop - viewbottom); }
-		template <typename elementType>		// translate from screen cviewordinates to viewriginal cviewordinates
+		template <typename elementType>		// translate from screen coordinates to original coordinates
 		double xinv( elementType t )
 		{ return double(t * (viewright - viewleft)) / (screen->w - 1) + viewleft; }
 		template <typename elementType>
@@ -54,10 +55,17 @@ class Fractal
 		{ return double(t * (viewtop - viewbottom)) / (screen->h - 1) + viewbottom; }
 
 		void render(bool flip = true);
-		void drawControls(void);
-		corners* makebox(void);
+		void drawcontrols(void);
+		void drawfractal(void);
+		void chaos(void);
+		void hideboxes(void);
+		void makebox(void);
+		void delbox(void);
 		bool activate(double,double);
-		void rotate(void);
+		void moveobject(int,int);
+		void rotate(int,int);
+		void moveside(int,int);
+		void movebox(int,int);
 		void transform(double&, double&, T*);
 	public:
 		Fractal(SDL_Surface*);
@@ -67,6 +75,7 @@ class Fractal
 Fractal::Fractal(SDL_Surface *surface)
 {
 	controlChanged = true;
+	redrawfractal = false;
 	iter = 15000;
 	srand ( time(NULL) );	// seed the RNG
 	active.pointActive = active.sideActive = active.boxActive = false;
@@ -84,12 +93,6 @@ Fractal::Fractal(SDL_Surface *surface)
 	SDL_SetColorKey( controls, SDL_SRCCOLORKEY, 0 );
 
 	makebox();
-	// corners *origin = makebox();
-	// boxes.push_back(origin);
-	std::cout << "Pushed box points are " << boxes.back()->x[0] << "," << boxes.back()->y[0] << " " << boxes.back()->x[1] << "," << boxes.back()->y[1] << " " << 
-											 boxes.back()->x[2] << "," << boxes.back()->y[2] << " " << boxes.back()->x[3] << "," << boxes.back()->y[3] << "\n";
-	
-
 	viewbottom = viewleft = 0;
 	viewtop = screen->h - 1;
 	viewright = screen->w - 1;
@@ -105,11 +108,8 @@ void Fractal::mainLoop(void)
 {
 	SDL_Event event;
 	bool done = false;
-	corners *tmp;
-	
 	while(!done)
 	{
-		// std::cout << "mainLoop\n";
 		while( SDL_PollEvent( &event ) )
 		{
 			switch( event.type )
@@ -119,15 +119,21 @@ void Fractal::mainLoop(void)
 					break;
 				case SDL_MOUSEMOTION:
 					activate(event.button.x, event.button.y);
+					render();
 					break;
 				case SDL_MOUSEBUTTONDOWN:
+					if( event.button.button != SDL_BUTTON_RIGHT )
+						moveobject(event.button.x, event.button.y);
 
 					break;
 				case SDL_MOUSEBUTTONUP:
-					makebox();
-					// tmp = makebox();
-					// boxes.push_back(tmp);
-					render();
+					if( event.button.button == SDL_BUTTON_RIGHT )
+					{
+						makebox();
+					}
+					else
+					{
+					}
 					break;
 				case SDL_KEYDOWN:
 
@@ -135,13 +141,25 @@ void Fractal::mainLoop(void)
 				case SDL_KEYUP:
 					switch( event.key.keysym.sym )
 					{
-						case SDLK_n:
-
+						case SDLK_n:	// new transformation
+							makebox();
 							break;
-						case SDLK_ESCAPE:
+						case SDLK_d:	// delete active transformation
+							delbox();
+							break;
+						case SDLK_h:	// hide controls
+							hideboxes();
+							break;
+						case SDLK_SPACE:
+							redrawfractal = true;
+							iter = 3000000;	// increase fractal resolution temporarily
+							hideboxes();
+							iter = 15000;	// reset fractal resolution for on-the-fly rendering
+							break;
+						case SDLK_ESCAPE:	// exit
 							done = true;
 							break;
-						case SDLK_z:
+						case SDLK_z:	// zoom
 							if( event.key.keysym.mod == KMOD_LSHIFT )
 							{
 
@@ -163,15 +181,22 @@ void Fractal::mainLoop(void)
 	}
 	// return 0;
 }
+void Fractal::hideboxes(void)
+{
+	SDL_FillRect( screen, NULL, 0 );
+	drawfractal();
+	SDL_Flip( screen );
+}
 void Fractal::render(bool flip)
 {
 	SDL_FillRect( screen, NULL, 0 );
-	drawControls();	// draw rectangles
-	// drawFractal();	// draw fractal
+	if( controlChanged )
+		drawcontrols();	// draw rectangles
+	drawfractal();	// draw fractal
 	if( flip )
 		SDL_Flip( screen );
 }
-void Fractal::drawControls(void)
+void Fractal::drawcontrols(void)
 {
 	Sint16 poly[4], polx[4];
 	Uint32 hl;
@@ -185,7 +210,6 @@ void Fractal::drawControls(void)
 				polx[i] = xtr(boxes[0]->x[i]);
 				poly[i] = ytr(boxes[0]->y[i]);
 			}
-			std::cout << std::endl;
 			polygonColor( controls, polx, poly, 4, oCL );	// draw control rectangle in red
 			for( int i = 0; i < 4; i++ )	// control circles
 				circleColor( controls, polx[i], poly[i], 7, circleCL - 0xFF00000 * 100*i );
@@ -249,15 +273,64 @@ void Fractal::drawControls(void)
 	}
 	SDL_BlitSurface( controls, NULL, screen, NULL );
 }
-Fractal::corners* Fractal::makebox(void)
+void Fractal::drawfractal( void )
 {
+	if( redrawfractal && boxes.size() > 1 )//&& tick > SDL_GetTicks() )	// some control on the fractal set has changed
+	{
+		SDL_FillRect( fractal, NULL, 0 );	// blank fractal surface for redrawing
+		chaos();
+	}
+	SDL_BlitSurface( fractal, NULL, screen, NULL );
+}
+void Fractal::chaos( void )
+{
+	double x,y,xp,yp,r;
+	int xplot, yplot;
+	x = rand() % screen->w;	// pick random point on screen
+	y = rand() % screen->h;	//
+	Uint32 pix;
+
+	for( int i = 0; i < 100; i++ )	// do some iterations to get close to the attractor (don't plot)
+	{
+		r = rand()%tfs.size();	// pick a random transformation
+		xp = x * tfs[r]->a + y * tfs[r]->b + tfs[r]->e;	// apply picked transformation
+		yp = x * tfs[r]->c + y * tfs[r]->d + tfs[r]->f;	//
+		x = xp;
+		y = yp;
+	}
+	for( int i = 0; i < iter; i++ )	// 25000 is a good ballpark
+	{
+		r = rand()%tfs.size();
+		xp = x * tfs[r]->a + y * tfs[r]->b + tfs[r]->e;
+		yp = x * tfs[r]->c + y * tfs[r]->d + tfs[r]->f;
+		x = xp;
+		y = yp;
+
+		xplot = xtr(x);
+		yplot = ytr(y);
+		if( xplot > 0 && xplot < fractal->w && yplot > 0 && yplot < fractal->h )
+		{
+			pix = (getpix( fractal, x, y ) << 8) + 0xFF;
+			if( pix > 0xFF )	// white pixel?
+			{
+				pixelColor( fractal, xtr(x), ytr(y), pix - 0x100000 );
+			}
+			else
+				pixelColor( fractal, xplot, yplot, 0xFFFFFFFF );
+		}
+
+		// pixelColor( fractal, x, y, 0x000000FF + colors[r][0]*0x1000000 + colors[r][1]*0x10000 + colors[r][2]*0x100);
+	}
+	redrawfractal = false;
+}
+void Fractal::makebox(void)	// TODO: make this work when already zoomed in
+{
+	active.pointActive = active.sideActive = active.boxActive = false;
+	render();
 	SDL_Event event;
 	bool down = false;
 	int downx, downy;
-	corners *box;
 	box = new corners;
-	std::cout << "makebox\n";
-
 	for( int i = 0; i < 3; )
 	{
 		while(SDL_PollEvent( &event ))
@@ -300,15 +373,44 @@ Fractal::corners* Fractal::makebox(void)
 		}
 	}
 	if( down )
+	{
 		getclick(box->x[3],box->y[3]);
+		activate(box->x[3],box->y[3]);	// is this necessary?
+	}
 	box->x[3] = box->x[1] + box->x[2] - box->x[0];	// calculate fourth vertex
 	box->y[3] = box->y[1] + box->y[2] - box->y[0];
 	swap( &box->x[2], &box->x[3] );	// fix vertex order to be in order of occurence
 	swap( &box->y[2], &box->y[3] );	//
-	std::cout << "box points are " << box->x[0] << "," << box->y[0] << " " << box->x[1] << "," << box->y[1] << " " << 
-									  box->x[2] << "," << box->y[2] << " " << box->x[3] << "," << box->y[3] << "\n";
 	boxes.push_back(box);
-	return box;
+	if( boxes.size() > 1 )
+	{
+		Ttmp = new T;
+		Ttmp = crunch(boxes.front(),boxes.back());
+		tfs.push_back(Ttmp);
+	}
+	redrawfractal = true;
+}
+void Fractal::delbox(void)
+{
+	if( active.sideActive || active.pointActive || active.boxActive )
+	{
+		boxes.erase(boxes.begin()+active.boxIndex);
+		if( active.boxIndex > 0 )	// not deleting control box
+		{
+			tfs.erase(tfs.begin()+active.boxIndex - 1);
+		}
+		else	// deleting control box
+		{
+			tfs.pop_back();
+			for( int i = 1; i < boxes.size(); i++ )	// re-crunch all transformations relative to new control box
+			{
+				// should I delete tfs[i] first?
+				tfs[i] = crunch( boxes.front(), boxes[i] );
+			}
+		}
+	}
+	redrawfractal = true;
+	render();
 }
 bool Fractal::activate(double x, double y)
 {
@@ -331,6 +433,7 @@ bool Fractal::activate(double x, double y)
 					// controlChanged = false;
 					// return true;
 				// }
+
 				boxstack.push_back(i);
 				pointstack.push_back(j);
 				active.pointActive = true;
@@ -352,7 +455,7 @@ bool Fractal::activate(double x, double y)
 
 			for( int j = 0; j < 4; j++ )
 			{
-				if( ptldist( x, y, q->x[i], q->y[i], q->x[(i+1)%4], q->y[(i+1)%4] ) < 9 && dist2( x, y, midx[i], midy[i] ) < dist2( midx[i], midy[i], q->x[i], q->y[i] ) )
+				if( ptldist( x, y, q->x[j], q->y[j], q->x[(j+1)%4], q->y[(j+1)%4] ) < 9 && dist2( x, y, midx[j], midy[j] ) < dist2( midx[j], midy[j], q->x[j], q->y[j] ) )
 				{
 					// if( sideActive && whichRegion == i && whichRegion == j )	// already on that side
 					// {
@@ -360,40 +463,57 @@ bool Fractal::activate(double x, double y)
 						// return true;
 					// }
 					// controlChanged = true;
+
 					boxstack.push_back(i);
 					pointstack.push_back(j);
 					active.pointActive = false;
 					active.sideActive = true;
 					active.boxActive = false;
 					found = true;
+
+
+
+					// active.boxIndex = i;
+					// active.pointIndex = j;
+					// controlChanged = true;
+					// return true;
 				}
 			}
 		}
 	}
-	for( int i = boxes.size() - 1; i >= 0; i-- )	// check areas
+	if( !found )
 	{
-		q = boxes[i];
-		t = crunch( unitbox, q );
-		x = x0;
-		y = y0;
-		transform( x, y, t );
-		if( x > 0 && x < 100 && y > 0 && y < 100 )
+		for( int i = boxes.size() - 1; i >= 0; i-- )	// check areas
 		{
-			// if( regionActive && whichRegion == i )	// already on that region
-			// {
-				// controlChanged = false;
+			q = boxes[i];
+			t = crunch( q, unitbox );
+			x = x0;
+			y = y0;
+			transform( x, y, t );
+			if( x > 0 && x < 100 && y > 0 && y < 100 )
+			{
+				// if( regionActive && whichRegion == i )	// already on that region
+				// {
+					// controlChanged = false;
+					// return true;
+				// }
+				// controlChanged = true;
+				boxstack.push_back(i);
+				// pointstack.push_back(j);
+				active.pointActive = false;
+				active.sideActive = false;
+				active.boxActive = true;
+				found = true;
+
+
+
+				// active.boxIndex = i;
+				// active.pointIndex = 0;
+				// controlChanged = true;
 				// return true;
-			// }
-			// controlChanged = true;
-			boxstack.push_back(i);
-			// pointstack.push_back(j);
-			active.pointActive = false;
-			active.sideActive = false;
-			active.boxActive = true;
-			found = true;
+			}
 		}
 	}
-	delete q;
 	if( found )
 	{
 		if( active.pointActive )
@@ -426,28 +546,294 @@ bool Fractal::activate(double x, double y)
 			active.boxIndex = boxstack[sindex];
 			active.pointIndex = pointstack[sindex];
 		}
-		else if( active.boxActive )
+		else if( active.boxActive )	// TODO: make this select the box closest to the pointer, weighted by box size
 		{
 			active.boxIndex = boxstack[0];
 		}
-				// active.boxIndex = i;
-				// active.pointIndex = j;
 
 		controlChanged = true;
 		return true;
 	}
 	else
+	{
+		active.pointActive = false;
+		active.sideActive = false;
+		active.boxActive = false;
 		return false;
+	}
 }
-void Fractal::rotate(void)
+void Fractal::moveobject(int x, int y)
 {
-	// corners *trbox;
-	// trbox = new pts;
-	// trbox->x[(j+2)%4] = 0;		trbox->y[(j+2)%4] = 0;		//
-	// trbox->x[(j+3)%4] = 100;	trbox->y[(j+3)%4] = 0;		// target box is the 100-box - could be anything, this size may helh with resolution
-	// trbox->x[(j+0)%4] = 100;	trbox->y[(j+0)%4] = 100;	//
-	// trbox->x[(j+1)%4] = 0;		trbox->y[(j+1)%4] = 100;	//
+	tick = SDL_GetTicks() + 100;
+	if( active.pointActive )
+	{
+		rotate(x,y);
+		redrawfractal = true;
+		render();
+	}
+	else if( active.sideActive )
+	{
+		moveside(x,y);
+		redrawfractal = true;
+		render();
+	}
+	else if( active.boxActive )
+	{
+		movebox(x,y);
+		redrawfractal = true;
+		render();
+	}
+}
+void Fractal::rotate(int x, int y)
+{
+	bool done = false, updatedrag = true;
+	SDL_Event event;
 
+	double x0, y0, remousex, remousey, recornerx, recornery, re1x, re1y, re3x, re3y;
+	double scale, sinphi, cosphi;
+
+	T *rotateT;
+	rotateT = new T;
+
+	while(!done)
+	{
+		while( SDL_PollEvent( &event ) )
+		{
+			switch( event.type )
+			{
+				case SDL_MOUSEMOTION:
+					// rotate with mouse motion
+					if( updatedrag )	// get initial box to rotate
+					{
+						  x0 = boxes[active.boxIndex]->x[(active.pointIndex+2)%4];	// fixed corner
+						  y0 = boxes[active.boxIndex]->y[(active.pointIndex+2)%4];	//
+						re1x = boxes[active.boxIndex]->x[(active.pointIndex+3)%4] - x0;		//
+						re1y = boxes[active.boxIndex]->y[(active.pointIndex+3)%4] - y0;		//
+						re3x = boxes[active.boxIndex]->x[(active.pointIndex+1)%4] - x0;		// shift affected corners relative to the fixed corner
+						re3y = boxes[active.boxIndex]->y[(active.pointIndex+1)%4] - y0;		//
+						recornerx = boxes[active.boxIndex]->x[active.pointIndex] - x0;		//
+						recornery = boxes[active.boxIndex]->y[active.pointIndex] - y0;		//
+						updatedrag = false;
+					}
+					remousex = xinv(event.button.x) - x0;	// shift mouse relative to fixed corner
+					remousey = yinv(event.button.y) - y0;	//
+
+					scale = sqrt(double(remousex * remousex + remousey * remousey )
+						/ double(recornerx * recornerx + recornery * recornery));	// get scale from old transformation to new
+
+					cosphi = cosangle( remousex, remousey, recornerx, recornery );	// get angle for rotation from original
+					sinphi = sinangle( remousex, remousey, recornerx, recornery );	//
+
+					rotateT->a = rotateT->d = cosphi*scale;
+					rotateT->b = -sinphi*scale;
+					rotateT->c = sinphi*scale;
+					rotateT->e = rotateT->f = 0;
+					boxes[active.boxIndex]->x[(active.pointIndex+3)%4] = re1x * rotateT->a + re1y * rotateT->b + rotateT->e + x0;
+					boxes[active.boxIndex]->y[(active.pointIndex+3)%4] = re1x * rotateT->c + re1y * rotateT->d + rotateT->f + y0;
+					boxes[active.boxIndex]->x[(active.pointIndex+1)%4] = re3x * rotateT->a + re3y * rotateT->b + rotateT->e + x0;
+					boxes[active.boxIndex]->y[(active.pointIndex+1)%4] = re3x * rotateT->c + re3y * rotateT->d + rotateT->f + y0;
+					boxes[active.boxIndex]->x[active.pointIndex] = recornerx * rotateT->a + recornery * rotateT->b + rotateT->e + x0;//event.button.x;
+					boxes[active.boxIndex]->y[active.pointIndex] = recornerx * rotateT->c + recornery * rotateT->d + rotateT->f + y0;//event.button.y;
+
+
+					if( active.boxIndex == 0 )
+					{
+						for( int i = 0; i < tfs.size(); i++ )	// re-crunch all transformations relative to new control box position
+						{
+							tfs[i] = crunch( boxes.front(), boxes[i+1] );
+						}
+					}
+					else
+					{
+						tfs[active.boxIndex - 1] = crunch( boxes.front(), boxes[active.boxIndex] );	// re-crunch active box
+					}
+
+					redrawfractal = true;
+					render();
+					break;
+				case SDL_MOUSEBUTTONUP:
+					if( abs(event.button.x - x) > 10 && abs(event.button.y - y) > 10 || SDL_GetTicks() > tick )
+					{
+						done = true;
+						render();
+					}
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					done = true;
+					render();
+				case SDL_KEYUP:
+					switch( event.key.keysym.sym )
+					{
+						case SDLK_ESCAPE:	// exit
+							done = true;
+							break;
+						default:
+							break;
+					}
+					break;
+				default:
+					break;
+			}
+		}
+	}
+}
+void Fractal::moveside(int x, int y)
+{
+	bool done = false, updatedrag = true;
+	SDL_Event event;
+	int point = active.pointIndex, point2 = (active.pointIndex+1)%4;
+
+	double remousex, remousey, s0relx, s0rely, s1relx, s1rely;
+
+	T *rotateT;
+	rotateT = new T;
+
+	while(!done)
+	{
+		while( SDL_PollEvent( &event ) )
+		{
+			switch( event.type )
+			{
+				case SDL_MOUSEMOTION:
+					// move side with mouse motion
+					remousex = xinv(double(event.button.x));
+					remousey = yinv(double(event.button.y));
+					if( updatedrag )
+					{
+						s0relx = boxes[active.boxIndex]->x[point] - remousex;
+						s0rely = boxes[active.boxIndex]->y[point] - remousey;
+						s1relx = boxes[active.boxIndex]->x[point2] - remousex;
+						s1rely = boxes[active.boxIndex]->y[point2] - remousey;
+						updatedrag = false;
+					}
+					boxes[active.boxIndex]->x[point] = remousex + s0relx;
+					boxes[active.boxIndex]->y[point] = remousey + s0rely;
+					boxes[active.boxIndex]->x[point2] = remousex + s1relx;
+					boxes[active.boxIndex]->y[point2] = remousey + s1rely;
+
+					if( active.boxIndex == 0 )
+					{
+						for( int i = 0; i < tfs.size(); i++ )	// re-crunch all transformations relative to new control box position
+						{
+							tfs[i] = crunch( boxes.front(), boxes[i+1] );
+						}
+					}
+					else
+					{
+						tfs[active.boxIndex - 1] = crunch( boxes.front(), boxes[active.boxIndex] );	// re-crunch active box
+					}
+
+					redrawfractal = true;
+					render();
+					break;
+				case SDL_MOUSEBUTTONUP:
+					if( abs(event.button.x - x) > 10 && abs(event.button.y - y) > 10 )
+					{
+						done = true;
+						render();
+					}
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					done = true;
+					render();
+				case SDL_KEYUP:
+					switch( event.key.keysym.sym )
+					{
+						case SDLK_ESCAPE:	// exit
+							done = true;
+							break;
+						default:
+							break;
+					}
+					break;
+				default:
+					break;
+			}
+		}
+	}
+}
+void Fractal::movebox(int x, int y)
+{
+	bool done = false, updatedrag = true;
+	SDL_Event event;
+
+	double remousex, remousey;
+	double p0relx, p0rely, p1relx, p1rely, p2relx, p2rely, p3relx, p3rely;
+
+	T *rotateT;
+	rotateT = new T;
+
+	while(!done)
+	{
+		while( SDL_PollEvent( &event ) )
+		{
+			switch( event.type )
+			{
+				case SDL_MOUSEMOTION:
+					// move box with mouse motion
+					remousex = xinv(double(event.button.x));
+					remousey = yinv(double(event.button.y));
+					if( updatedrag )
+					{
+						p0relx = boxes[active.boxIndex]->x[0] - remousex;
+						p0rely = boxes[active.boxIndex]->y[0] - remousey;
+						p1relx = boxes[active.boxIndex]->x[1] - remousex;
+						p1rely = boxes[active.boxIndex]->y[1] - remousey;
+						p2relx = boxes[active.boxIndex]->x[2] - remousex;
+						p2rely = boxes[active.boxIndex]->y[2] - remousey;
+						p3relx = boxes[active.boxIndex]->x[3] - remousex;
+						p3rely = boxes[active.boxIndex]->y[3] - remousey;
+						updatedrag = false;
+					}
+					boxes[active.boxIndex]->x[0] = remousex + p0relx;
+					boxes[active.boxIndex]->y[0] = remousey + p0rely;
+					boxes[active.boxIndex]->x[1] = remousex + p1relx;
+					boxes[active.boxIndex]->y[1] = remousey + p1rely;
+					boxes[active.boxIndex]->x[2] = remousex + p2relx;
+					boxes[active.boxIndex]->y[2] = remousey + p2rely;
+					boxes[active.boxIndex]->x[3] = remousex + p3relx;
+					boxes[active.boxIndex]->y[3] = remousey + p3rely;
+
+					if( active.boxIndex == 0 )
+					{
+						for( int i = 0; i < tfs.size(); i++ )	// re-crunch all transformations relative to new control box position
+						{
+							tfs[i] = crunch( boxes.front(), boxes[i+1] );
+						}
+					}
+					else
+					{
+						tfs[active.boxIndex - 1] = crunch( boxes.front(), boxes[active.boxIndex] );	// re-crunch active box
+					}
+
+					redrawfractal = true;
+					render();
+					break;
+				case SDL_MOUSEBUTTONUP:
+					if( abs(event.button.x - x) > 10 && abs(event.button.y - y) > 10 )
+					{
+						done = true;
+						render();
+					}
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					done = true;
+					render();
+				case SDL_KEYUP:
+					switch( event.key.keysym.sym )
+					{
+						case SDLK_ESCAPE:	// exit
+							done = true;
+							break;
+						default:
+							break;
+					}
+					break;
+				default:
+					break;
+			}
+		}
+	}
 }
 void Fractal::transform( double &x, double &y, T *t )
 {
@@ -455,7 +841,7 @@ void Fractal::transform( double &x, double &y, T *t )
 	x = t->a * double(xn) + t->b * double(yn) + t->e;
 	y = t->c * double(xn) + t->d * double(yn) + t->f;
 }
-Fractal::T* Fractal::crunch( corners *p, corners *q )	// TODO: can this have q default to boxes[0]? It didn't work last I tried it...
+Fractal::T* Fractal::crunch( corners *q, corners *p )	// get transformation that transforms q into p
 {
 	T *temp;
 	temp = new T;

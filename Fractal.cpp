@@ -14,9 +14,10 @@ int main( int argc, char* argv[] )
 
 	/* Initialize SDL windows */
 	SDL_putenv( "SDL_VIDEO_CENTERED=center" );	// center the video window
-	SDL_WM_SetCaption("IFS Fractal Generator", NULL); // sets the Window Title
+	SDL_WM_SetCaption("IFS Fractal Generator 2", NULL); // sets the Window Title
 	const SDL_VideoInfo* myPointer = SDL_GetVideoInfo();	// get current display information (for height, width, color depth, etc.)
-	screen = SDL_SetVideoMode( myPointer->current_w/1.5, myPointer->current_h/1.5, 0, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_RESIZABLE);
+	// screen = SDL_SetVideoMode( myPointer->current_w, myPointer->current_h, 0, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN);
+	screen = SDL_SetVideoMode( myPointer->current_w/1.5, myPointer->current_h/1.5, 0, SDL_HWSURFACE|SDL_DOUBLEBUF);
 
 	/* End SDL initialization */
 
