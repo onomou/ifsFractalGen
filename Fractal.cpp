@@ -17,13 +17,13 @@ int main( int argc, char* argv[] )
 	SDL_WM_SetCaption("IFS Fractal Generator 2", NULL); // sets the Window Title
 	const SDL_VideoInfo* myPointer = SDL_GetVideoInfo();	// get current display information (for height, width, color depth, etc.)
 	// screen = SDL_SetVideoMode( myPointer->current_w, myPointer->current_h, 0, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN);
-	screen = SDL_SetVideoMode( myPointer->current_w/1.5, myPointer->current_h/1.5, 0, SDL_HWSURFACE|SDL_DOUBLEBUF);
+	screen = SDL_SetVideoMode( myPointer->current_w/1.2, myPointer->current_h/1.2, 0, SDL_HWSURFACE|SDL_DOUBLEBUF);
 
 	/* End SDL initialization */
 
 	Fractal f(screen);
 	f.mainLoop();
-	
+
 	// delete f;
 	SDL_FreeSurface( screen );
 	return 0;

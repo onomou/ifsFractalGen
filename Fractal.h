@@ -16,9 +16,9 @@ class Fractal
 	private:
 		SDL_Surface *screen, *fractal, *controls;
 
-		unsigned int iter;
-		Uint32 tick;	// is this the same as unsigned int?
-		bool controlChanged, redrawfractal;
+		unsigned int iter, global_iter, highres_iter;
+		Uint32 timer;	// is this the same as unsigned int?
+		bool controlChanged, redrawfractal, doTimer;
 		double viewleft,viewright,viewbottom,viewtop;
 
 		struct
@@ -76,8 +76,13 @@ Fractal::Fractal(SDL_Surface *surface)
 {
 	controlChanged = true;
 	redrawfractal = false;
-	iter = 15000;
-	srand ( time(NULL) );	// seed the RNG
+	doTimer = true;
+
+	highres_iter = 6000000;
+	global_iter = 80000;
+	iter = global_iter;
+
+	srand( time(NULL) );	// seed the random number generator
 	active.pointActive = active.sideActive = active.boxActive = false;
 
 	unitbox = new corners;
@@ -122,17 +127,15 @@ void Fractal::mainLoop(void)
 					render();
 					break;
 				case SDL_MOUSEBUTTONDOWN:
-					if( event.button.button != SDL_BUTTON_RIGHT )
+					if( event.button.button == SDL_BUTTON_LEFT )
+					{
 						moveobject(event.button.x, event.button.y);
-
+					}
 					break;
 				case SDL_MOUSEBUTTONUP:
 					if( event.button.button == SDL_BUTTON_RIGHT )
 					{
 						makebox();
-					}
-					else
-					{
 					}
 					break;
 				case SDL_KEYDOWN:
@@ -150,17 +153,19 @@ void Fractal::mainLoop(void)
 						case SDLK_h:	// hide controls
 							hideboxes();
 							break;
-						case SDLK_SPACE:
+						case SDLK_SPACE:	// render high quality
 							redrawfractal = true;
-							iter = 3000000;	// increase fractal resolution temporarily
+							doTimer = false;
+							iter = highres_iter;	// increase fractal resolution temporarily
 							hideboxes();
-							iter = 15000;	// reset fractal resolution for on-the-fly rendering
+							iter = global_iter;	// reset fractal resolution for on-the-fly rendering
+							doTimer = true;
 							break;
 						case SDLK_ESCAPE:	// exit
 							done = true;
 							break;
 						case SDLK_z:	// zoom
-							if( event.key.keysym.mod == KMOD_LSHIFT )
+							if( event.key.keysym.mod == KMOD_SHIFT )
 							{
 
 							}
@@ -289,7 +294,7 @@ void Fractal::chaos( void )
 	x = rand() % screen->w;	// pick random point on screen
 	y = rand() % screen->h;	//
 	Uint32 pix;
-
+	
 	for( int i = 0; i < 100; i++ )	// do some iterations to get close to the attractor (don't plot)
 	{
 		r = rand()%tfs.size();	// pick a random transformation
@@ -298,30 +303,60 @@ void Fractal::chaos( void )
 		x = xp;
 		y = yp;
 	}
-	for( int i = 0; i < iter; i++ )	// 25000 is a good ballpark
+	timer = SDL_GetTicks() + 30; // triggers end after approximately 30ms
+	if( doTimer == true )
 	{
-		r = rand()%tfs.size();
-		xp = x * tfs[r]->a + y * tfs[r]->b + tfs[r]->e;
-		yp = x * tfs[r]->c + y * tfs[r]->d + tfs[r]->f;
-		x = xp;
-		y = yp;
-
-		xplot = xtr(x);
-		yplot = ytr(y);
-		if( xplot > 0 && xplot < fractal->w && yplot > 0 && yplot < fractal->h )
+		while( SDL_GetTicks() < timer )	// 25000 is a good ballpark
 		{
-			pix = (getpix( fractal, x, y ) << 8) + 0xFF;
-			if( pix > 0xFF )	// white pixel?
-			{
-				pixelColor( fractal, xtr(x), ytr(y), pix - 0x100000 );
-			}
-			else
-				pixelColor( fractal, xplot, yplot, 0xFFFFFFFF );
-		}
+			r = rand()%tfs.size();
+			xp = x * tfs[r]->a + y * tfs[r]->b + tfs[r]->e;
+			yp = x * tfs[r]->c + y * tfs[r]->d + tfs[r]->f;
+			x = xp;
+			y = yp;
 
-		// pixelColor( fractal, x, y, 0x000000FF + colors[r][0]*0x1000000 + colors[r][1]*0x10000 + colors[r][2]*0x100);
+			xplot = xtr(x);
+			yplot = ytr(y);
+			if( xplot > 0 && xplot < fractal->w && yplot > 0 && yplot < fractal->h )
+			{
+				pix = (getpix( fractal, x, y ) << 8) + 0xFF;
+				if( pix > 0xFF )	// white pixel?
+				{
+					pixelColor( fractal, xtr(x), ytr(y), pix - 0x100000 );
+				}
+				else
+					pixelColor( fractal, xplot, yplot, 0xFFFFFFFF );
+			}
+			// pixelColor( fractal, x, y, 0x000000FF + colors[r][0]*0x1000000 + colors[r][1]*0x10000 + colors[r][2]*0x100);
+		}
+	}
+	else
+	{
+		for( int i = 0; i < iter; i++ )	// 25000 is a good ballpark
+		{
+			r = rand()%tfs.size();
+			xp = x * tfs[r]->a + y * tfs[r]->b + tfs[r]->e;
+			yp = x * tfs[r]->c + y * tfs[r]->d + tfs[r]->f;
+			x = xp;
+			y = yp;
+
+			xplot = xtr(x);
+			yplot = ytr(y);
+			if( xplot > 0 && xplot < fractal->w && yplot > 0 && yplot < fractal->h )
+			{
+				pix = (getpix( fractal, x, y ) << 8) + 0xFF;
+				if( pix > 0xFF )	// white pixel?
+				{
+					pixelColor( fractal, xtr(x), ytr(y), pix - 0x100000 );
+				}
+				else
+					pixelColor( fractal, xplot, yplot, 0xFFFFFFFF );
+			}
+
+			// pixelColor( fractal, x, y, 0x000000FF + colors[r][0]*0x1000000 + colors[r][1]*0x10000 + colors[r][2]*0x100);
+		}
 	}
 	redrawfractal = false;
+	doTimer = true;
 }
 void Fractal::makebox(void)	// TODO: make this work when already zoomed in
 {
@@ -564,7 +599,6 @@ bool Fractal::activate(double x, double y)
 }
 void Fractal::moveobject(int x, int y)
 {
-	tick = SDL_GetTicks() + 100;
 	if( active.pointActive )
 	{
 		rotate(x,y);
@@ -634,8 +668,7 @@ void Fractal::rotate(int x, int y)
 					boxes[active.boxIndex]->y[(active.pointIndex+1)%4] = re3x * rotateT->c + re3y * rotateT->d + rotateT->f + y0;
 					boxes[active.boxIndex]->x[active.pointIndex] = recornerx * rotateT->a + recornery * rotateT->b + rotateT->e + x0;//event.button.x;
 					boxes[active.boxIndex]->y[active.pointIndex] = recornerx * rotateT->c + recornery * rotateT->d + rotateT->f + y0;//event.button.y;
-
-
+					
 					if( active.boxIndex == 0 )
 					{
 						for( int i = 0; i < tfs.size(); i++ )	// re-crunch all transformations relative to new control box position
@@ -652,11 +685,11 @@ void Fractal::rotate(int x, int y)
 					render();
 					break;
 				case SDL_MOUSEBUTTONUP:
-					if( abs(event.button.x - x) > 10 && abs(event.button.y - y) > 10 || SDL_GetTicks() > tick )
-					{
+					// if( abs(event.button.x - x) > 10 && abs(event.button.y - y) > 10 )
+					// {
 						done = true;
 						render();
-					}
+					// }
 					break;
 				case SDL_MOUSEBUTTONDOWN:
 					done = true;
@@ -727,11 +760,11 @@ void Fractal::moveside(int x, int y)
 					render();
 					break;
 				case SDL_MOUSEBUTTONUP:
-					if( abs(event.button.x - x) > 10 && abs(event.button.y - y) > 10 )
-					{
+					// if( abs(event.button.x - x) > 10 && abs(event.button.y - y) > 10 )
+					// {
 						done = true;
 						render();
-					}
+					// }
 					break;
 				case SDL_MOUSEBUTTONDOWN:
 					done = true;
@@ -810,11 +843,11 @@ void Fractal::movebox(int x, int y)
 					render();
 					break;
 				case SDL_MOUSEBUTTONUP:
-					if( abs(event.button.x - x) > 10 && abs(event.button.y - y) > 10 )
-					{
+					// if( abs(event.button.x - x) > 10 && abs(event.button.y - y) > 10 )
+					// {
 						done = true;
 						render();
-					}
+					// }
 					break;
 				case SDL_MOUSEBUTTONDOWN:
 					done = true;

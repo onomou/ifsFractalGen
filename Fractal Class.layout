@@ -2,9 +2,9 @@
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Release" />
 	<File name="Fractal.cpp" open="1" top="0" tabpos="1">
-		<Cursor position="843" topLine="0" />
+		<Cursor position="249" topLine="0" />
 	</File>
 	<File name="Fractal.h" open="1" top="1" tabpos="2">
-		<Cursor position="22870" topLine="710" />
+		<Cursor position="10226" topLine="272" />
 	</File>
 </CodeBlocks_layout_file>
