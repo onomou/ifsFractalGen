@@ -26,7 +26,6 @@ class Fractal
 			bool pointActive;
 			bool sideActive;
 			bool boxActive;
-			// enum o { POINT, LINE, BOX } object;
 			int boxIndex, pointIndex;
 		} active;
 
@@ -39,7 +38,7 @@ class Fractal
 		std::vector<T*> tfs;		// transformation values a...f
 		T *activeT, *Ttmp;	// transformation numbers for active region
 
-		T* crunch( corners*, corners* );
+		T* boxToValues( corners*, corners* ); // calculates a...f for the transformation from the first corners* to the second
 
 		template <typename elementType>
 		double xtr( elementType t )	// translate from original coordinates to screen coordinates
@@ -395,7 +394,7 @@ void Fractal::makebox(void)	// TODO: make this work when already zoomed in
 					break;
 				case SDL_MOUSEBUTTONUP:
 					down = false;
-					if( dist2( downx, downy, event.button.x, event.button.y ) > 144 )	// dragged mouse more than n pixels
+					if( dist2( downx, downy, event.button.x, event.button.y ) > 2500 )	// dragged mouse more than n pixels
 					{
 						box->x[i] = event.button.x;
 						box->y[i] = event.button.y;
@@ -420,7 +419,7 @@ void Fractal::makebox(void)	// TODO: make this work when already zoomed in
 	if( boxes.size() > 1 )
 	{
 		Ttmp = new T;
-		Ttmp = crunch(boxes.front(),boxes.back());
+		Ttmp = boxToValues(boxes.front(),boxes.back());
 		tfs.push_back(Ttmp);
 	}
 	redrawfractal = true;
@@ -440,7 +439,7 @@ void Fractal::delbox(void)
 			for( int i = 1; i < boxes.size(); i++ )	// re-crunch all transformations relative to new control box
 			{
 				// should I delete tfs[i] first?
-				tfs[i] = crunch( boxes.front(), boxes[i] );
+				tfs[i] = boxToValues( boxes.front(), boxes[i] );
 			}
 		}
 	}
@@ -521,7 +520,7 @@ bool Fractal::activate(double x, double y)
 		for( int i = boxes.size() - 1; i >= 0; i-- )	// check areas
 		{
 			q = boxes[i];
-			t = crunch( q, unitbox );
+			t = boxToValues( q, unitbox );
 			x = x0;
 			y = y0;
 			transform( x, y, t );
@@ -673,12 +672,12 @@ void Fractal::rotate(int x, int y)
 					{
 						for( int i = 0; i < tfs.size(); i++ )	// re-crunch all transformations relative to new control box position
 						{
-							tfs[i] = crunch( boxes.front(), boxes[i+1] );
+							tfs[i] = boxToValues( boxes.front(), boxes[i+1] );
 						}
 					}
 					else
 					{
-						tfs[active.boxIndex - 1] = crunch( boxes.front(), boxes[active.boxIndex] );	// re-crunch active box
+						tfs[active.boxIndex - 1] = boxToValues( boxes.front(), boxes[active.boxIndex] );	// re-crunch active box
 					}
 
 					redrawfractal = true;
@@ -748,12 +747,12 @@ void Fractal::moveside(int x, int y)
 					{
 						for( int i = 0; i < tfs.size(); i++ )	// re-crunch all transformations relative to new control box position
 						{
-							tfs[i] = crunch( boxes.front(), boxes[i+1] );
+							tfs[i] = boxToValues( boxes.front(), boxes[i+1] );
 						}
 					}
 					else
 					{
-						tfs[active.boxIndex - 1] = crunch( boxes.front(), boxes[active.boxIndex] );	// re-crunch active box
+						tfs[active.boxIndex - 1] = boxToValues( boxes.front(), boxes[active.boxIndex] );	// re-crunch active box
 					}
 
 					redrawfractal = true;
@@ -831,12 +830,12 @@ void Fractal::movebox(int x, int y)
 					{
 						for( int i = 0; i < tfs.size(); i++ )	// re-crunch all transformations relative to new control box position
 						{
-							tfs[i] = crunch( boxes.front(), boxes[i+1] );
+							tfs[i] = boxToValues( boxes.front(), boxes[i+1] );
 						}
 					}
 					else
 					{
-						tfs[active.boxIndex - 1] = crunch( boxes.front(), boxes[active.boxIndex] );	// re-crunch active box
+						tfs[active.boxIndex - 1] = boxToValues( boxes.front(), boxes[active.boxIndex] );	// re-crunch active box
 					}
 
 					redrawfractal = true;
@@ -874,7 +873,7 @@ void Fractal::transform( double &x, double &y, T *t )
 	x = t->a * double(xn) + t->b * double(yn) + t->e;
 	y = t->c * double(xn) + t->d * double(yn) + t->f;
 }
-Fractal::T* Fractal::crunch( corners *q, corners *p )	// get transformation that transforms q into p
+Fractal::T* Fractal::boxToValues( corners *q, corners *p )	// get transformation that transforms q into p
 {
 	T *temp;
 	temp = new T;
