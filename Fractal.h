@@ -38,8 +38,9 @@ class Fractal
 		std::vector<T*> tfs;		// transformation values a...f
 		T *activeT, *Ttmp;	// transformation numbers for active region
 
-		T* boxToValues( corners*, corners* ); // calculates a...f for the transformation from the first corners* to the second
+		T* boxToValues(corners*,corners*); // calculates a...f for the transformation from the first corners* to the second
 
+		void verifyBox(corners*);
 		template <typename elementType>
 		double xtr( elementType t )	// translate from original coordinates to screen coordinates
 		{ return double((screen->w - 1) * (t - viewleft)) / (viewright - viewleft); }
@@ -57,13 +58,12 @@ class Fractal
 		void drawcontrols(void);
 		void drawfractal(void);
 		void chaosgame(void);
+		void deterministic(void);
 		void hideboxes(void);
 		void makebox(void);
 		void delbox(void);
 		bool activate(double,double);
 		void moveobject(void);
-
-		void moveEventLoop(int);
 		void rotateAction(  int,int,bool*,T*);
 		void moveSideAction(int,int,bool*);
 		void moveBoxAction( int,int,bool*);
@@ -155,6 +155,9 @@ void Fractal::mainLoop(void)
 						case SDLK_h:	// hide controls
 							hideboxes();
 							break;
+						case SDLK_m:	// hide controls
+							deterministic();
+							break;
 						case SDLK_SPACE:	// render high quality
 							redrawfractal = true;
 							doTimer = false;
@@ -166,7 +169,7 @@ void Fractal::mainLoop(void)
 						case SDLK_ESCAPE:	// exit
 							done = true;
 							break;
-						case SDLK_z:	// zoom
+						case SDLK_z:	// zoom - TODO
 							if( event.key.keysym.mod == KMOD_SHIFT )
 							{
 
@@ -360,6 +363,28 @@ void Fractal::chaosgame( void )
 	redrawfractal = false;
 	doTimer = true;
 }
+void Fractal::deterministic( void )
+{
+	SDL_Surface *swap = SDL_ConvertSurface( screen, screen->format, screen->flags );
+	SDL_FillRect( swap, NULL, 0 );
+	for( int x = 0; x < screen->w; x++ )
+	{
+		for( int y = 0; y < screen->h; y++ )
+		{
+			if( getred( screen, x, y ) != 0 )
+			{
+				for( int i = 0; i < tfs.size(); i++ )
+				{
+					pixelColor( swap, tfs[i]->a * x + tfs[i]->b * y + tfs[i]->e, tfs[i]->c * x + tfs[i]->d * y + tfs[i]->f, 0xFFFFFFFF );
+				}
+			}
+		}
+	}
+	SDL_FillRect( screen, NULL, 0 );
+	SDL_BlitSurface( swap, NULL, screen, NULL );
+	delete swap;
+	SDL_Flip( screen );
+}
 void Fractal::makebox(void)	// TODO: make this work when already zoomed in
 {
 	active.pointActive = active.sideActive = active.boxActive = false;
@@ -370,7 +395,7 @@ void Fractal::makebox(void)	// TODO: make this work when already zoomed in
 	box = new corners;
 	for( int i = 0; i < 3; )
 	{
-		while(SDL_PollEvent( &event ))
+		while( SDL_PollEvent( &event ) )
 		{
 			switch( event.type )
 			{
@@ -465,12 +490,6 @@ bool Fractal::activate(double x, double y)
 		{
 			if( dist2( x, y, boxes[i]->x[j], boxes[i]->y[j] ) < 200 )
 			{
-				// if( pointActive && whichRegion == i && whichPoint == j )	// already on that point
-				// {
-					// controlChanged = false;
-					// return true;
-				// }
-
 				boxstack.push_back(i);
 				pointstack.push_back(j);
 				active.pointActive = true;
@@ -494,26 +513,12 @@ bool Fractal::activate(double x, double y)
 			{
 				if( ptldist( x, y, q->x[j], q->y[j], q->x[(j+1)%4], q->y[(j+1)%4] ) < 9 && dist2( x, y, midx[j], midy[j] ) < dist2( midx[j], midy[j], q->x[j], q->y[j] ) )
 				{
-					// if( sideActive && whichRegion == i && whichRegion == j )	// already on that side
-					// {
-						// controlChanged = false;
-						// return true;
-					// }
-					// controlChanged = true;
-
 					boxstack.push_back(i);
 					pointstack.push_back(j);
 					active.pointActive = false;
 					active.sideActive = true;
 					active.boxActive = false;
 					found = true;
-
-
-
-					// active.boxIndex = i;
-					// active.pointIndex = j;
-					// controlChanged = true;
-					// return true;
 				}
 			}
 		}
@@ -529,25 +534,12 @@ bool Fractal::activate(double x, double y)
 			transform( x, y, t );
 			if( x > 0 && x < 100 && y > 0 && y < 100 )
 			{
-				// if( regionActive && whichRegion == i )	// already on that region
-				// {
-					// controlChanged = false;
-					// return true;
-				// }
-				// controlChanged = true;
 				boxstack.push_back(i);
 				// pointstack.push_back(j);
 				active.pointActive = false;
 				active.sideActive = false;
 				active.boxActive = true;
 				found = true;
-
-
-
-				// active.boxIndex = i;
-				// active.pointIndex = 0;
-				// controlChanged = true;
-				// return true;
 			}
 		}
 	}
@@ -601,21 +593,6 @@ bool Fractal::activate(double x, double y)
 }
 void Fractal::moveobject(void)
 {
-	if( active.pointActive )
-	{
-		moveEventLoop(0);
-	}
-	else if( active.sideActive )
-	{
-		moveEventLoop(1);
-	}
-	else if( active.boxActive )
-	{
-		moveEventLoop(2);
-	}
-}
-void Fractal::moveEventLoop(int whichAction) // whichAction: 0 = rotate, 1 = side move, 2 = box move
-{
 	SDL_Event event;
 	bool done = false;
 	bool *updated;
@@ -623,9 +600,13 @@ void Fractal::moveEventLoop(int whichAction) // whichAction: 0 = rotate, 1 = sid
 	*updated = true;
 	T *rotateT;
 	rotateT = new T;
-
 	double mouseX, mouseY;
-	while(!done)
+	unsigned int whichAction = -1; // whichAction: 0 = rotate, 1 = side move, 2 = box move
+	     if(active.pointActive) { whichAction = 0; }
+	else if(active.sideActive ) { whichAction = 1; }
+	else if(active.boxActive  ) { whichAction = 2; }
+	
+	while( !done )
 	{
 		while( SDL_PollEvent( &event ) )
 		{
@@ -663,6 +644,7 @@ void Fractal::moveEventLoop(int whichAction) // whichAction: 0 = rotate, 1 = sid
 					render();
 					break;
 				case SDL_MOUSEBUTTONUP:
+					verifyBox(boxes[active.boxIndex]);
 					done = true;
 					render();
 					break;
@@ -780,4 +762,9 @@ Fractal::T* Fractal::boxToValues( corners *q, corners *p )	// get transformation
 	temp->f = double(-p->y[2]*q->x[1]*q->y[0]+p->y[1]*q->x[2]*q->y[0]+p->y[2]*q->x[0]*q->y[1]-p->y[0]*q->x[2]*q->y[1]-p->y[1]*q->x[0]*q->y[2]+p->y[0]*q->x[1]*q->y[2])/double(-q->x[1]*q->y[0]+q->x[2]*q->y[0]+q->x[0]*q->y[1]-q->x[2]*q->y[1]-q->x[0]*q->y[2]+q->x[1]*q->y[2]);
 
 	return temp;
+}
+void Fractal::verifyBox(corners *currentbox)
+{
+	currentbox->x[2] = currentbox->x[1] + currentbox->x[3] - currentbox->x[0];	// calculate fourth vertex
+	currentbox->y[2] = currentbox->y[1] + currentbox->y[3] - currentbox->y[0];
 }
