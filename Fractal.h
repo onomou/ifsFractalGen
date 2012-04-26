@@ -30,7 +30,7 @@ class Fractal
 		} active;
 
 		struct corners
-		{ Sint16 x[4],y[4]; };	// TODO: should this be double for better precision?
+		{ Sint16 x[4],y[4]; };
 		corners *unitbox, *box;
 		std::vector<corners*> boxes;	// index of corners for each box
 		struct T
@@ -40,6 +40,9 @@ class Fractal
 
 		T* boxToValues(corners*,corners*); // calculates a...f for the transformation from the first corners* to the second
 
+		int save(void);
+		int load(void);
+		
 		void verifyBox(corners*);
 		template <typename elementType>
 		double xtr( elementType t )	// translate from original coordinates to screen coordinates
@@ -767,4 +770,12 @@ void Fractal::verifyBox(corners *currentbox)
 {
 	currentbox->x[2] = currentbox->x[1] + currentbox->x[3] - currentbox->x[0];	// calculate fourth vertex
 	currentbox->y[2] = currentbox->y[1] + currentbox->y[3] - currentbox->y[0];
+}
+int Fractal::save(void)
+{
+	
+}
+int Fractal::load(void)
+{
+	
 }
