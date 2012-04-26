@@ -2381,7 +2381,7 @@
 1332567176 source:c:\users\steven.williams\code\ifsfractalgen\fractal.cpp
 	"Fractal.h"
 
-1334432692 c:\users\steven.williams\code\ifsfractalgen\fractal.h
+1335399523 c:\users\steven.williams\code\ifsfractalgen\fractal.h
 	<SDL/SDL.h>
 	<SDL/SDL_gfxPrimitives.h>
 	<cmath>

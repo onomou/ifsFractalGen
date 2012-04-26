@@ -8,3 +8,6 @@ Right-click to add another transformation.
 'd' deletes the transformation currently highlighted under the cursor.
 Spacebar renders the fractal at a higher resolution, without the transformation rectangles.
 Editing transformations should be intuitive, with a click-drag paradigm.
+
+COMPILING:
+Fractal Class.cbp is the one to use now. Fractal Generators.cbp is no longer being used, and its functions should have been replicated in the Class project.
