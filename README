@@ -1,6 +1,6 @@
 This program draws Iterated Function System fractals interactively. It is largely based on the documentation provided by Michael Barnsley in his 1988 book Fractals Everywhere.
 
-You will find ready-to-run binaries in the folder bin/release. Make sure to get the .dll's for the program to run.
+You will find ready-to-run binaries in the folder bin/release. Make sure to get the .dll's for the program to run. Or look for the .zip file in the Downloads section on github. It may be somewhat out of date, but it has the whole package and will generally be stable.
 
 USAGE:
 Left-click to control transformation rectangles. You will need to add one to begin with, so try clicking in the lower-left, upper-left, and lower-right areas of the window.
