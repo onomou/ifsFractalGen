@@ -2381,12 +2381,16 @@
 1335400993 source:c:\users\steven.williams\code\ifsfractalgen\fractal.cpp
 	"Fractal.h"
 
-1335405281 c:\users\steven.williams\code\ifsfractalgen\fractal.h
+1335686623 c:\users\steven.williams\code\ifsfractalgen\fractal.h
 	<SDL/SDL.h>
 	<SDL/SDL_gfxPrimitives.h>
 	<cmath>
 	<ctime>
+	<stdlib.h>
 	<vector>
+	<fstream>
+	<sstream>
+	<cctype>
 	"niceFunctions.h"
 	"sdlFunctions.h"
 	<iostream>

@@ -7,7 +7,12 @@ Left-click to control transformation rectangles. You will need to add one to beg
 Right-click to add another transformation.
 'd' deletes the transformation currently highlighted under the cursor.
 Spacebar renders the fractal at a higher resolution, without the transformation rectangles.
-Editing transformations should be intuitive, with a click-drag paradigm.
+'s' saves the current set of transformations in the file "boxes.txt" - do not modify this file if you want to open it again! It also saves the transformation numbers to the file "transformations.txt"
+'o' loads "boxes.txt" to recover a previous fractal.
+Use your mouse to edit existing transformations. Click-drag to move the various parts of each transformation box around.
+
+CHANGELOG:
+2012-04-29: Added primitive save and open functionality
 
 COMPILING:
 Fractal Class.cbp is the one to use now. Fractal Generators.cbp is no longer being used, and its functions should have been replicated in the Class project.

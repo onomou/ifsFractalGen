@@ -2,7 +2,11 @@
 #include <SDL/SDL_gfxPrimitives.h>
 #include <cmath>
 #include <ctime>
+#include <stdlib.h>
 #include <vector>
+#include <fstream>
+#include <sstream>
+#include <cctype>
 #include "niceFunctions.h"
 #include "sdlFunctions.h"
 
@@ -40,9 +44,10 @@ class Fractal
 
 		T* boxToValues(corners*,corners*); // calculates a...f for the transformation from the first corners* to the second
 
+		std::fstream file, file2;
 		int save(void);
-		int load(void);
-		
+		int open(void);
+
 		void verifyBox(corners*);
 		template <typename elementType>
 		double xtr( elementType t )	// translate from original coordinates to screen coordinates
@@ -66,10 +71,12 @@ class Fractal
 		void makebox(void);
 		void delbox(void);
 		bool activate(double,double);
+
 		void moveobject(void);
 		void rotateAction(  int,int,bool*,T*);
 		void moveSideAction(int,int,bool*);
 		void moveBoxAction( int,int,bool*);
+		// void moveBoxPath(
 
 		void transform(double&, double&, T*);
 	public:
@@ -158,8 +165,15 @@ void Fractal::mainLoop(void)
 						case SDLK_h:	// hide controls
 							hideboxes();
 							break;
-						case SDLK_m:	// hide controls
+						case SDLK_m:	// run deterministic algorithm
 							deterministic();
+							break;
+						case SDLK_o:	// save boxes
+							open();
+							render();
+							break;
+						case SDLK_s:	// save boxes
+							save();
 							break;
 						case SDLK_SPACE:	// render high quality
 							redrawfractal = true;
@@ -608,7 +622,7 @@ void Fractal::moveobject(void)
 	     if(active.pointActive) { whichAction = 0; }
 	else if(active.sideActive ) { whichAction = 1; }
 	else if(active.boxActive  ) { whichAction = 2; }
-	
+
 	while( !done )
 	{
 		while( SDL_PollEvent( &event ) )
@@ -619,19 +633,25 @@ void Fractal::moveobject(void)
 					mouseX = event.button.x;
 					mouseY = event.button.y;
 
-					switch( whichAction )
-					{
-						case 0:
-							rotateAction(mouseX,mouseY,updated,rotateT);
-							break;
-						case 1:
-							moveSideAction(mouseX,mouseY,updated);
-							break;
-						case 2:
-							moveBoxAction(mouseX,mouseY,updated);
-							break;
-						default: break;
-					}
+					if( whichAction == 0 )
+					{ rotateAction(mouseX,mouseY,updated,rotateT); }
+					else if( whichAction == 1 )
+					{ moveSideAction(mouseX,mouseY,updated); }
+					else if( whichAction == 2 )
+					{ moveBoxAction(mouseX,mouseY,updated); }
+					// switch( whichAction )
+					// {
+						// case 0:
+							// rotateAction(mouseX,mouseY,updated,rotateT);
+							// break;
+						// case 1:
+							// moveSideAction(mouseX,mouseY,updated);
+							// break;
+						// case 2:
+							// moveBoxAction(mouseX,mouseY,updated);
+							// break;
+						// default: break;
+					// }
 					if( active.boxIndex == 0 )
 					{
 						for( int i = 0; i < tfs.size(); i++ )	// re-crunch all transformations relative to new control box position
@@ -650,6 +670,7 @@ void Fractal::moveobject(void)
 					verifyBox(boxes[active.boxIndex]);
 					done = true;
 					render();
+					while(SDL_PollEvent(&event));
 					break;
 				default:
 					done = true;
@@ -773,9 +794,93 @@ void Fractal::verifyBox(corners *currentbox)
 }
 int Fractal::save(void)
 {
-	
+    file.open("boxes.txt",std::ios::out|std::ios::trunc);
+    file2.open("transformations.txt",std::ios::out|std::ios::trunc);
+	if( !file.is_open() || !file2.is_open() )
+	{
+		return 1;
+	}
+	file << boxes.size() << " total boxes (" << boxes.size()-1 << ") transformations.\n";
+	for( int i = 0; i < boxes.size(); i++ )
+	{
+		for( int j = 0; j < 4; j++ )
+		{
+			file << boxes[i]->x[j] << "," << boxes[i]->y[j] << ";";
+		}
+		// if( i < boxes.size() - 1 )
+			file << "\n";
+	}
+	file2 << "a\t\tb\t\tc\t\td\t\te\t\tf\n";
+	for( int i = 0; i < tfs.size(); i++ )
+	{
+		file2 << tfs[i]->a << "\t" << tfs[i]->b << "\t" << tfs[i]->c << "\t" << tfs[i]->d << "\t" << tfs[i]->e << "\t" << tfs[i]->f << "\n";
+	}
+	file.close();
+	file2.close();
+	return 0;
 }
-int Fractal::load(void)
+int Fractal::open(void) // TODO
 {
+	T *Ttmp;
+	boxes.clear();
+	tfs.clear();
+	std::string line, tmp;
+	std::stringstream tmpstream;
+	bool justfinishedx = true, numberdone = false;
+	int xypos = 0;
+    file.open("boxes.txt",std::ios::in);
+	if( !file.is_open() )
+		return 1;
+	std::getline( file, line );	// get first line, with number of boxes and transformations
+	int numberofboxes = atoi( &line[0] );
+	for( int i = 0; i < numberofboxes; i++ )
+	{
+		box = new corners;
+		line = "";
+		tmpstream.str("");
+		std::getline( file, line );
+		xypos = 0;
+		for( int i = 0; i < line.size(); i++ )
+		{
+			if( isdigit(line[i]) )
+			{
+				tmpstream << line[i];
+			}
+			else
+			{
+				if( line[i] == ',' )
+				{
+					tmpstream >> box->x[xypos];	// >> on a stringstream sets eof bit
+					tmpstream.str("");	// reset the stream for the next number
+					tmpstream.clear(); // clear error bits
+				}
+				else if( line[i] == ';' )
+				{
+					tmpstream >> box->y[xypos];	// >> on a stringstream sets eof bit
+					xypos++;	// increment the position counter for the next xy pair
+					tmpstream.str("");	// reset the stream for the next number
+					tmpstream.clear();
+				}
+				else	// not a recognized character
+				{
+					tmpstream.str("");
+					i = line.size();	// scrap the rest of this line, something may have gone wrong
+					continue;
+				}
+			}
+		}
+		tmpstream.clear(); // clear error bits, jsut to be sure
+		boxes.push_back(box);
+	}
 	
+	if( boxes.size() > 1 )
+	{
+		for( int i = 1; i < boxes.size(); i++ )
+		{
+			Ttmp = new T;
+			Ttmp = boxToValues(boxes.front(),boxes[i]);
+			tfs.push_back(Ttmp);
+		}
+	}
+	return 0;
 }
