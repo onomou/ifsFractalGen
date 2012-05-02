@@ -37,7 +37,7 @@ Solve a*x + b*y + e = x' and c*x + d*y + f = y' for a,b,c,d,e,f given n=1 points
 (1 | 0 | 0 | (-q2 y1+r3 y1+p1 y2-r3 y2-p1 y3+q2 y3)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3)
  0 | 1 | 0 | (q2 x1-r3 x1-p1 x2+r3 x2+p1 x3-q2 x3)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3)
  0 | 0 | 1 | (-r3 x2 y1+q2 x3 y1+r3 x1 y2-p1 x3 y2-q2 x1 y3+p1 x2 y3)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3))
- and the same with xpi replaced by ypi
+ and the same with xp_i replaced by yp_i
 http://www.wolframalpha.com/input/?i=row+reduce+{{x1%2Cy1%2C1%2Cp1}%2C{x2%2Cy2%2C1%2Cq2}%2C{x3%2Cy3%2C1%2Cr3}}
 
 Linear Transformations: See 1.8 p.79 in the Linear Algebra text
@@ -48,4 +48,15 @@ x' = ax + by + e;
 y' = cx + dy + f;
 x0 = ax + by + e
 
-
+TODO:
+.Plant initial box to reduce the number of steps needed to start
+.Displaying the fractal centered using a moveable coordinate system
+.Color stealing/labeling for transformations
+.Boxes from a set of transformation numbers
+ax+by+e=x'=f(x,y)    cx+dy+f=y'=g(x,y)
+3 sets of x',y' give unique a,b,c,d,e,f
+Given a,b,c,d,e,f pick any 3 x,y pairs to get two transformation boxes
+If dist(x,y) < dist(f(x,y),g(x,y)), the transformation is not contractive and will not form a fractal
+Otherwise, it contracts toward a certain point. Take two points p0, p1 and find p0'=(f(p0),g(p0)), p1'=(f(p1),g(p1)). Intersect the lines p0<->p0' and p1<->p1'. This is the attractor of that transformation.
+Make a note of speed=dist(p0,p0')/dist(p0,attractor). This may be useful.
+Repeat the above with all transformation numbers. Compare speeds among transformations. Our goal may be to choose initial points p0, p1, p2 that all have similar speeds. Distance from the attractor may make the difference and determine how to scale the points along a ray from the attractor.

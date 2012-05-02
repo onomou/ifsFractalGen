@@ -15,4 +15,4 @@ CHANGELOG:
 2012-04-29: Added primitive save and open functionality
 
 COMPILING:
-Fractal Class.cbp is the one to use now. Fractal Generators.cbp is no longer being used, and its functions should have been replicated in the Class project.
+Open up "Fractal Class.cbp" in Code::Blocks and compile. Everything should be set up in the project file. This project uses SDL and the SDL_gfx libraries. There may be a couple Windows dependencies. Everything else should be contained in any standard C++ compiler.

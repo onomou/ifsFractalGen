@@ -43,10 +43,12 @@ class Fractal
 		T *activeT, *Ttmp;	// transformation numbers for active region
 
 		T* boxToValues(corners*,corners*); // calculates a...f for the transformation from the first corners* to the second
-
+		void valuesToBoxes(void);	// TODO
+		
 		std::fstream file, file2;
 		int save(void);
-		int open(void);
+		int openBoxes(void);
+		int openTransformations(void);
 
 		void verifyBox(corners*);
 		template <typename elementType>
@@ -169,7 +171,13 @@ void Fractal::mainLoop(void)
 							deterministic();
 							break;
 						case SDLK_o:	// save boxes
-							open();
+							openBoxes();
+							redrawfractal = true;
+							render();
+							break;
+						case SDLK_p:	// save boxes
+							openTransformations();
+							redrawfractal = true;
 							render();
 							break;
 						case SDLK_s:	// save boxes
@@ -787,6 +795,32 @@ Fractal::T* Fractal::boxToValues( corners *q, corners *p )	// get transformation
 
 	return temp;
 }
+void Fractal::valuesToBoxes(void)
+{
+// std::cout << "In valuesToBoxes()\n";
+	boxes.clear();
+	corners *initialbox, *tmpbox;
+	initialbox = new corners;
+	initialbox->x[0] = (double)screen->w / 4.0;
+	initialbox->y[0] = (double)screen->h / 4.0;
+	initialbox->x[1] = 3.0 * (double)screen->w / 4.0;
+	initialbox->y[1] = (double)screen->h / 4.0;
+	initialbox->x[3] = (double)screen->w / 4.0;
+	initialbox->y[3] = 3.0 * (double)screen->h / 4.0;
+	verifyBox(initialbox);
+	boxes.push_back(initialbox);
+// std::cout << "Pushed back initialbox\n";
+	for( int i = 0; i < tfs.size(); i++ )	// loop through all transformations, calculating the boxes implied by them given initialbox
+	{
+		tmpbox = new corners;
+		for( int j = 0; j < 4; j++ )
+		{
+			tmpbox->x[j] = initialbox->x[j] * tfs[i]->a + initialbox->y[j] * tfs[i]->b + tfs[i]->e;
+			tmpbox->y[j] = initialbox->x[j] * tfs[i]->c + initialbox->y[j] * tfs[i]->d + tfs[i]->f;
+		}
+		boxes.push_back(tmpbox);
+	}
+}
 void Fractal::verifyBox(corners *currentbox)
 {
 	currentbox->x[2] = currentbox->x[1] + currentbox->x[3] - currentbox->x[0];	// calculate fourth vertex
@@ -810,7 +844,7 @@ int Fractal::save(void)
 		// if( i < boxes.size() - 1 )
 			file << "\n";
 	}
-	file2 << "a\t\tb\t\tc\t\td\t\te\t\tf\n";
+	file2 << tfs.size() << " transformations\na\t\tb\t\tc\t\td\t\te\t\tf\n";
 	for( int i = 0; i < tfs.size(); i++ )
 	{
 		file2 << tfs[i]->a << "\t" << tfs[i]->b << "\t" << tfs[i]->c << "\t" << tfs[i]->d << "\t" << tfs[i]->e << "\t" << tfs[i]->f << "\n";
@@ -819,12 +853,71 @@ int Fractal::save(void)
 	file2.close();
 	return 0;
 }
-int Fractal::open(void) // TODO
+int Fractal::openTransformations(void)
+{
+	boxes.clear();
+	tfs.clear();
+	double nrs[6];
+	T *Ttmp;
+	std::string line;
+	std::stringstream tmpstream;
+    file.open("transformations.txt",std::ios::in);
+	if( !file.is_open() )
+		return 1;
+	std::getline( file, line ); // get first line, with number of transformations
+	for( int i = 0; isdigit(line[i]); i++ )
+		tmpstream << line[i];
+	int numberoftransformations = 0;
+	tmpstream >> numberoftransformations;
+	tmpstream.str("");
+	tmpstream.clear(); // clear error bits
+	std::getline( file, line ); // get second line, with transformation variable labels a...f
+
+// std::cout << "Read second line\n";
+	int i = 0;
+	for( int t = 0; t < numberoftransformations; t++ )
+	{
+		Ttmp = new T;
+		// for( int i = 0; i < 6; i++ )
+		{
+			std::getline( file, line );
+			i = 0;
+			for( int j = 0; j < line.size()+1; j++ )	// probably not very safe, but a hack workaround for getting the last number (f value) in
+			{
+				if( isdigit(line[j]) || line[j] == '.' || line[j] == '-' )
+				{
+					tmpstream << line[j];
+// std::cout << "Found digit " << line[j] << "\n";
+				}
+				else if( line[j] != '\n' )
+				{
+					tmpstream >> nrs[i];
+// std::cout << "Found non-digit " << line[j] << "nrs["<<i<<"] = " << nrs[i] << "\n";
+					tmpstream.str("");
+					tmpstream.clear();
+					i++;
+				}
+			}
+		}
+// std::cout << "Got one set of numbers : " << numberoftransformations << "\n";
+		Ttmp->a = nrs[0];
+		Ttmp->b = nrs[1];
+		Ttmp->c = nrs[2];
+		Ttmp->d = nrs[3];
+		Ttmp->e = nrs[4];
+		Ttmp->f = nrs[5];
+		tfs.push_back(Ttmp);
+// std::cout << "Pushed back one transformation\n";
+	}
+	valuesToBoxes();
+	file.close();
+}
+int Fractal::openBoxes(void) // Does not check for errors in the text file! May cause dragons!
 {
 	T *Ttmp;
 	boxes.clear();
 	tfs.clear();
-	std::string line, tmp;
+	std::string line;
 	std::stringstream tmpstream;
 	bool justfinishedx = true, numberdone = false;
 	int xypos = 0;
@@ -832,7 +925,12 @@ int Fractal::open(void) // TODO
 	if( !file.is_open() )
 		return 1;
 	std::getline( file, line );	// get first line, with number of boxes and transformations
-	int numberofboxes = atoi( &line[0] );
+	for( int i = 0; isdigit(line[i]); i++ )
+		tmpstream << line[i];
+	int numberofboxes;
+	tmpstream >> numberofboxes;
+	tmpstream.clear(); // clear error bits
+// std::cout << "Finished initialization\n";
 	for( int i = 0; i < numberofboxes; i++ )
 	{
 		box = new corners;
@@ -842,6 +940,7 @@ int Fractal::open(void) // TODO
 		xypos = 0;
 		for( int i = 0; i < line.size(); i++ )
 		{
+// std::cout << "Looping through each line : " << i << "\n";
 			if( isdigit(line[i]) )
 			{
 				tmpstream << line[i];
@@ -869,8 +968,10 @@ int Fractal::open(void) // TODO
 				}
 			}
 		}
-		tmpstream.clear(); // clear error bits, jsut to be sure
+// std::cout << "Finished looping\n";
+		tmpstream.clear(); // clear error bits, just to be sure
 		boxes.push_back(box);
+// std::cout << "Pushed back that box\n";
 	}
 	
 	if( boxes.size() > 1 )
@@ -882,5 +983,7 @@ int Fractal::open(void) // TODO
 			tfs.push_back(Ttmp);
 		}
 	}
+// std::cout << "Finished pushing back transformations\n";
+	file.close();
 	return 0;
 }
