@@ -25,16 +25,18 @@ class Fractal
 		bool controlChanged, redrawfractal, doTimer;
 		double viewleft,viewright,viewbottom,viewtop;
 
+		struct corners
+		{ Sint16 x[4],y[4]; };
+		
 		struct
 		{
 			bool pointActive;
 			bool sideActive;
 			bool boxActive;
 			int boxIndex, pointIndex;
+			corners *point;
 		} active;
 
-		struct corners
-		{ Sint16 x[4],y[4]; };
 		corners *unitbox, *box;
 		std::vector<corners*> boxes;	// index of corners for each box
 		struct T
@@ -42,7 +44,7 @@ class Fractal
 		std::vector<T*> tfs;		// transformation values a...f
 		T *activeT, *Ttmp;	// transformation numbers for active region
 
-		T* boxToValues(corners*,corners*); // calculates a...f for the transformation from the first corners* to the second
+		T* boxToValues(corners*,corners*); // calculates values a...f for the transformation from the first corners* to the second
 		void valuesToBoxes(void);	// TODO
 		
 		std::fstream file, file2;
@@ -235,11 +237,14 @@ void Fractal::drawcontrols(void)
 {
 	Sint16 poly[4], polx[4];
 	Uint32 hl;
-	if( controlChanged )
+	double xActive, yActive;
+	if( controlChanged && boxes.size() > 0 )
 	{
 		SDL_FillRect( controls, NULL, 0 );
-		if( boxes.size() > 0 )	// make sure there is something to draw
-		{
+		// if( boxes.size() > 0 )	// make sure there is something to draw
+		// if( boxes.size() == 0 )
+			// break;
+		// {
 			for( int i = 0; i < 4; i++ )
 			{
 				polx[i] = xtr(boxes[0]->x[i]);
@@ -268,26 +273,33 @@ void Fractal::drawcontrols(void)
 				else
 					hl = circleHL;
 				// 2
-				filledCircleColor( controls, xtr(boxes[active.boxIndex]->x[ active.pointIndex     ]), ytr(boxes[active.boxIndex]->y[ active.pointIndex     ]), 7, hl );	// draw active circle (under pointer)
-					  circleColor( controls, xtr(boxes[active.boxIndex]->x[ active.pointIndex     ]), ytr(boxes[active.boxIndex]->y[ active.pointIndex     ]), 7, hl );	// draw active circle (under pointer)
+				xActive = xtr(active.point->x[active.pointIndex]);
+				yActive = ytr(active.point->y[active.pointIndex]);
+				
+				filledCircleColor( controls, xActive, yActive, 7, hl );	// draw active circle (under pointer)
+					  circleColor( controls, xActive, yActive, 7, hl );	// draw active circle (under pointer)
 				// 3
-				filledCircleColor( controls, xtr(boxes[active.boxIndex]->x[(active.pointIndex+1)%4]), ytr(boxes[active.boxIndex]->y[(active.pointIndex+1)%4]), 7, hl );	// draw secondary circle (also to be moved)
-					  circleColor( controls, xtr(boxes[active.boxIndex]->x[(active.pointIndex+1)%4]), ytr(boxes[active.boxIndex]->y[(active.pointIndex+1)%4]), 7, hl );	// draw secondary circle (also to be moved)
+				xActive = xtr(active.point->x[(active.pointIndex+1)%4]);
+				yActive = ytr(active.point->y[(active.pointIndex+1)%4]);
+				filledCircleColor( controls, xActive, yActive, 7, hl );	// draw secondary circle (also to be moved)
+					  circleColor( controls, xActive, yActive, 7, hl );	// draw secondary circle (also to be moved)
 				// 1
-				filledCircleColor( controls, xtr(boxes[active.boxIndex]->x[(active.pointIndex+3)%4]), ytr(boxes[active.boxIndex]->y[(active.pointIndex+3)%4]), 7, hl );	// draw secondary circle (also to be moved)
-					  circleColor( controls, xtr(boxes[active.boxIndex]->x[(active.pointIndex+3)%4]), ytr(boxes[active.boxIndex]->y[(active.pointIndex+3)%4]), 7, hl );	// draw secondary circle (also to be moved)
+				xActive = xtr(active.point->x[(active.pointIndex+3)%4]);
+				yActive = ytr(active.point->y[(active.pointIndex+3)%4]);
+				filledCircleColor( controls, xActive, yActive, 7, hl );	// draw secondary circle (also to be moved)
+					  circleColor( controls, xActive, yActive, 7, hl );	// draw secondary circle (also to be moved)
 			}
 			else if( active.sideActive )
 			{
 				hl = sideHL;
-				polx[0] = xtr(boxes[active.boxIndex]->x[ active.pointIndex     ]);
-				polx[1] = xtr(boxes[active.boxIndex]->x[(active.pointIndex+1)%4]);
-				polx[2] = xtr(boxes[active.boxIndex]->x[(active.pointIndex+1)%4]);
+				polx[0] = xtr(active.point->x[ active.pointIndex     ]);
+				polx[1] = xtr(active.point->x[(active.pointIndex+1)%4]);
+				polx[2] = xtr(active.point->x[(active.pointIndex+1)%4]);
 				polx[3] = polx[0];
-				poly[0] = ytr(boxes[active.boxIndex]->y[ active.pointIndex     ])+1;
-				poly[1] = ytr(boxes[active.boxIndex]->y[(active.pointIndex+1)%4])+1;
-				poly[2] = ytr(boxes[active.boxIndex]->y[(active.pointIndex+1)%4])-1;
-				poly[3] = ytr(boxes[active.boxIndex]->y[ active.pointIndex	   ])-1;
+				poly[0] = ytr(active.point->y[ active.pointIndex     ])+1;
+				poly[1] = ytr(active.point->y[(active.pointIndex+1)%4])+1;
+				poly[2] = ytr(active.point->y[(active.pointIndex+1)%4])-1;
+				poly[3] = ytr(active.point->y[ active.pointIndex	 ])-1;
 				filledPolygonColor( controls, polx, poly, 4, hl );
 				polx[0] += 1;	poly[0] -= 1;
 				polx[1] += 1;	poly[1] -= 1;
@@ -301,9 +313,9 @@ void Fractal::drawcontrols(void)
 					hl = oHL;
 				else
 					hl = boxHL;
-				filledPolygonColor( controls, boxes[active.boxIndex]->x, boxes[active.boxIndex]->y, 4, hl );
+				filledPolygonColor( controls, active.point->x, active.point->y, 4, hl );
 			}
-		}
+		// }
 		// controlChanged = false;
 	}
 	SDL_BlitSurface( controls, NULL, screen, NULL );
@@ -323,7 +335,7 @@ void Fractal::chaosgame( void )
 	int xplot, yplot;
 	x = rand() % screen->w;	// pick random point on screen
 	y = rand() % screen->h;	//
-	Uint32 pix;
+	Uint32 pix, color;
 
 	for( int i = 0; i < 100; i++ )	// do some iterations to get close to the attractor (don't plot)
 	{
@@ -333,17 +345,17 @@ void Fractal::chaosgame( void )
 		x = xp;
 		y = yp;
 	}
-	timer = SDL_GetTicks() + 30; // triggers end after approximately 30ms
 	if( doTimer == true )
 	{
-		while( SDL_GetTicks() < timer )	// 25000 is a good ballpark
+		timer = SDL_GetTicks() + 30; // triggers end after approximately 30ms
+		while( SDL_GetTicks() < timer )
 		{
 			r = rand()%tfs.size();
 			xp = x * tfs[r]->a + y * tfs[r]->b + tfs[r]->e;
 			yp = x * tfs[r]->c + y * tfs[r]->d + tfs[r]->f;
 			x = xp;
 			y = yp;
-
+			// color = 
 			xplot = xtr(x);
 			yplot = ytr(y);
 			if( xplot > 0 && xplot < fractal->w && yplot > 0 && yplot < fractal->h )
@@ -499,6 +511,8 @@ void Fractal::delbox(void)
 	redrawfractal = true;
 	render();
 }
+
+// searches for box, point, or line closes to given (x,y)
 bool Fractal::activate(double x, double y)
 {
 	x = xinv(x);
@@ -583,6 +597,7 @@ bool Fractal::activate(double x, double y)
 				}
 			}
 			active.boxIndex = boxstack[sindex];
+			active.point = boxes[active.boxIndex];
 			active.pointIndex = pointstack[sindex];
 		}
 		else if( active.sideActive )
@@ -598,11 +613,13 @@ bool Fractal::activate(double x, double y)
 				}
 			}
 			active.boxIndex = boxstack[sindex];
+			active.point = boxes[active.boxIndex];
 			active.pointIndex = pointstack[sindex];
 		}
 		else if( active.boxActive )	// TODO: make this select the box closest to the pointer, weighted by box size
 		{
 			active.boxIndex = boxstack[0];
+			active.point = boxes[active.boxIndex];
 		}
 
 		controlChanged = true;
@@ -697,14 +714,14 @@ void Fractal::rotateAction(int eventX, int eventY, bool *updated, T *rotateT)
 	double scale, sinphi, cosphi;
 	if( *updated )	// get initial box to rotate
 	{
-			   x0 = boxes[active.boxIndex]->x[(active.pointIndex+2)%4];				// fixed corner
-			   y0 = boxes[active.boxIndex]->y[(active.pointIndex+2)%4];				//   "     "
-			 re1x = boxes[active.boxIndex]->x[(active.pointIndex+3)%4] - x0;		//
-			 re1y = boxes[active.boxIndex]->y[(active.pointIndex+3)%4] - y0;		//
-			 re3x = boxes[active.boxIndex]->x[(active.pointIndex+1)%4] - x0;		// shift affected corners relative to the fixed corner
-			 re3y = boxes[active.boxIndex]->y[(active.pointIndex+1)%4] - y0;		//
-		recornerx = boxes[active.boxIndex]->x[active.pointIndex		 ] - x0;		//
-		recornery = boxes[active.boxIndex]->y[active.pointIndex		 ] - y0;		//
+			   x0 = active.point->x[(active.pointIndex+2)%4];			// fixed corner
+			   y0 = active.point->y[(active.pointIndex+2)%4];			//   "     "
+			 re1x = active.point->x[(active.pointIndex+3)%4] - x0;		//
+			 re1y = active.point->y[(active.pointIndex+3)%4] - y0;		//
+			 re3x = active.point->x[(active.pointIndex+1)%4] - x0;		// shift affected corners relative to the fixed corner
+			 re3y = active.point->y[(active.pointIndex+1)%4] - y0;		//
+		recornerx = active.point->x[active.pointIndex		 ] - x0;	//
+		recornery = active.point->y[active.pointIndex		 ] - y0;	//
 		*updated = false;
 	}
 	remousex = xinv(eventX) - x0;	// shift mouse relative to fixed corner
@@ -720,12 +737,12 @@ void Fractal::rotateAction(int eventX, int eventY, bool *updated, T *rotateT)
 	rotateT->b = -sinphi*scale;
 	rotateT->c = sinphi*scale;
 	rotateT->e = rotateT->f = 0;
-	boxes[active.boxIndex]->x[(active.pointIndex+3)%4] = re1x * rotateT->a + re1y * rotateT->b + rotateT->e + x0;
-	boxes[active.boxIndex]->y[(active.pointIndex+3)%4] = re1x * rotateT->c + re1y * rotateT->d + rotateT->f + y0;
-	boxes[active.boxIndex]->x[(active.pointIndex+1)%4] = re3x * rotateT->a + re3y * rotateT->b + rotateT->e + x0;
-	boxes[active.boxIndex]->y[(active.pointIndex+1)%4] = re3x * rotateT->c + re3y * rotateT->d + rotateT->f + y0;
-	boxes[active.boxIndex]->x[active.pointIndex] = recornerx * rotateT->a + recornery * rotateT->b + rotateT->e + x0;//event.button.x;
-	boxes[active.boxIndex]->y[active.pointIndex] = recornerx * rotateT->c + recornery * rotateT->d + rotateT->f + y0;//event.button.y;
+	active.point->x[(active.pointIndex+3)%4] = re1x * rotateT->a + re1y * rotateT->b + rotateT->e + x0;
+	active.point->y[(active.pointIndex+3)%4] = re1x * rotateT->c + re1y * rotateT->d + rotateT->f + y0;
+	active.point->x[(active.pointIndex+1)%4] = re3x * rotateT->a + re3y * rotateT->b + rotateT->e + x0;
+	active.point->y[(active.pointIndex+1)%4] = re3x * rotateT->c + re3y * rotateT->d + rotateT->f + y0;
+	active.point->x[active.pointIndex] = recornerx * rotateT->a + recornery * rotateT->b + rotateT->e + x0;//event.button.x;
+	active.point->y[active.pointIndex] = recornerx * rotateT->c + recornery * rotateT->d + rotateT->f + y0;//event.button.y;
 }
 void Fractal::moveSideAction(int eventX, int eventY, bool *updated)
 {
@@ -736,16 +753,16 @@ void Fractal::moveSideAction(int eventX, int eventY, bool *updated)
 
 	if( *updated )
 	{
-		s0relx = boxes[active.boxIndex]->x[point] - remousex;
-		s0rely = boxes[active.boxIndex]->y[point] - remousey;
-		s1relx = boxes[active.boxIndex]->x[point2] - remousex;
-		s1rely = boxes[active.boxIndex]->y[point2] - remousey;
+		s0relx = active.point->x[point] - remousex;
+		s0rely = active.point->y[point] - remousey;
+		s1relx = active.point->x[point2] - remousex;
+		s1rely = active.point->y[point2] - remousey;
 		*updated = false;
 	}
-	boxes[active.boxIndex]->x[point] = remousex + s0relx;
-	boxes[active.boxIndex]->y[point] = remousey + s0rely;
-	boxes[active.boxIndex]->x[point2] = remousex + s1relx;
-	boxes[active.boxIndex]->y[point2] = remousey + s1rely;
+	active.point->x[point] = remousex + s0relx;
+	active.point->y[point] = remousey + s0rely;
+	active.point->x[point2] = remousex + s1relx;
+	active.point->y[point2] = remousey + s1rely;
 }
 void Fractal::moveBoxAction(int eventX, int eventY, bool *updated)
 {
@@ -756,24 +773,24 @@ void Fractal::moveBoxAction(int eventX, int eventY, bool *updated)
 	remousey = yinv(eventY);
 	if( *updated )
 	{
-		p0relx = boxes[active.boxIndex]->x[0] - remousex;
-		p0rely = boxes[active.boxIndex]->y[0] - remousey;
-		p1relx = boxes[active.boxIndex]->x[1] - remousex;
-		p1rely = boxes[active.boxIndex]->y[1] - remousey;
-		p2relx = boxes[active.boxIndex]->x[2] - remousex;
-		p2rely = boxes[active.boxIndex]->y[2] - remousey;
-		p3relx = boxes[active.boxIndex]->x[3] - remousex;
-		p3rely = boxes[active.boxIndex]->y[3] - remousey;
+		p0relx = active.point->x[0] - remousex;
+		p0rely = active.point->y[0] - remousey;
+		p1relx = active.point->x[1] - remousex;
+		p1rely = active.point->y[1] - remousey;
+		p2relx = active.point->x[2] - remousex;
+		p2rely = active.point->y[2] - remousey;
+		p3relx = active.point->x[3] - remousex;
+		p3rely = active.point->y[3] - remousey;
 		*updated = false;
 	}
-	boxes[active.boxIndex]->x[0] = remousex + p0relx;
-	boxes[active.boxIndex]->y[0] = remousey + p0rely;
-	boxes[active.boxIndex]->x[1] = remousex + p1relx;
-	boxes[active.boxIndex]->y[1] = remousey + p1rely;
-	boxes[active.boxIndex]->x[2] = remousex + p2relx;
-	boxes[active.boxIndex]->y[2] = remousey + p2rely;
-	boxes[active.boxIndex]->x[3] = remousex + p3relx;
-	boxes[active.boxIndex]->y[3] = remousey + p3rely;
+	active.point->x[0] = remousex + p0relx;
+	active.point->y[0] = remousey + p0rely;
+	active.point->x[1] = remousex + p1relx;
+	active.point->y[1] = remousey + p1rely;
+	active.point->x[2] = remousex + p2relx;
+	active.point->y[2] = remousey + p2rely;
+	active.point->x[3] = remousex + p3relx;
+	active.point->y[3] = remousey + p3rely;
 }
 void Fractal::transform( double &x, double &y, T *t )
 {
